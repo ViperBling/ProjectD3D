@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <iostream>
+#include <sstream>
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -55,6 +56,7 @@ int CALLBACK WinMain(
 
 
 LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    static std::string title;
     switch (msg)
     {
         case WM_CLOSE:
@@ -69,6 +71,17 @@ LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             if (wParam == 'F') {
                 SetWindowText(hWnd, "I am Back!!!");
             }
+            break;
+        case WM_CHAR:
+            title.push_back((char)wParam);
+            SetWindowText(hWnd, title.c_str());
+            break;
+        case WM_LBUTTONDOWN:
+            POINTS pt = MAKEPOINTS(lParam);
+            std::ostringstream oss;
+            // 显示点击位置
+            oss << "(" << pt.x << ", " << pt.y << ")";
+            SetWindowText(hWnd, oss.str().c_str());
             break;
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
