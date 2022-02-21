@@ -1,4 +1,4 @@
-add_library(D3D11Lib WinMain.cpp)
+add_library(D3D11Lib Window.cpp WindowsMessageMap.cpp)
 add_executable(D3D11 WinMain.cpp)
 
 set_target_properties (D3D11 PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")
