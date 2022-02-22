@@ -4,7 +4,7 @@
         WindowsMessageMap.cpp
         )
 
-add_executable(D3D11 WinMain.cpp)
+
 
 set_target_properties (D3D11 PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")
 set_target_properties (D3D11 PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:windows")

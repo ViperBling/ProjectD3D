@@ -6,6 +6,10 @@ set (CMAKE_CXX_STANDARD 17)
 
 set (CMAKE_CXX_FLAGS -EHsc)
 
+set (WINDOWS_ASSETS_DIR "${PROJECT_SOURCE_DIR}/Assets/")
+
+add_executable(D3D11  WinMain.cpp ${WINDOWS_ASSETS_DIR}/Icon/AppIcon.o)
+
 include_directories(include)
 include_directories(src)
 
