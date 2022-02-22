@@ -1,7 +1,8 @@
-add_library(D3D11Lib
+﻿add_library(D3D11Lib
+        D3D11Exception.cpp
         Window.cpp
         WindowsMessageMap.cpp
-        D3D11Exception.cpp)
+        )
 
 add_executable(D3D11 WinMain.cpp)
 

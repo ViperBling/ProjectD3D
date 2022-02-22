@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // 自定义的头文件
 #include "D3D11Win.h"
@@ -10,7 +10,7 @@ private:
     class Exception : public D3D11Exception
     {
     public:
-        Exception( int line,const char* file,HRESULT hr ) noexcept;
+        Exception( int line, const char* file, HRESULT hr ) noexcept;
         const char* what() const noexcept override;
         virtual const char* GetType() const noexcept;
         static std::string TranslateErrorCode( HRESULT hr ) noexcept;

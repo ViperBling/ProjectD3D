@@ -1,4 +1,4 @@
-#include "Window.h"
+﻿#include "Window.h"
 #include <sstream>
 
 Window::WindowClass Window::WindowClass::wndClass;
@@ -116,12 +116,12 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 }
 
 // Window Exception
-Window::Exception::Exception(int line, const char *file, HRESULT hr) noexcept :
+Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept :
     D3D11Exception(line, file),
     hr(hr)
 {}
 
-const char *Window::Exception::what() const noexcept
+const char* Window::Exception::what() const noexcept
 {
     std::ostringstream oss;
     oss << GetType() << std::endl
@@ -132,7 +132,7 @@ const char *Window::Exception::what() const noexcept
     return whatBuffer.c_str();
 }
 
-const char *Window::Exception::GetType() const noexcept
+const char* Window::Exception::GetType() const noexcept
 {
     return "D3D11 Window Exception";
 }

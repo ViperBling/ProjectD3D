@@ -1,6 +1,5 @@
+﻿#include <sstream>
 #include "D3D11Exception.h"
-#include <sstream>
-
 
 D3D11Exception::D3D11Exception(int line, const char *file) noexcept :
     line(line),
