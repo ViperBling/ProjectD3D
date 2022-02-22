@@ -88,10 +88,19 @@ LRESULT Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 
 LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-    return 0;
+    // 接收窗口类的指针
+    Window* const pWnd = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    // 发送消息
+    return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
 }
 
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
-    return 0;
+    switch (msg) 
+    {
+        case WM_CLOSE:
+            PostQuitMessage(0);
+            return 0;
+    }
+    return DefWindowProc(hWnd, msg, wParam, lParam);
 }
