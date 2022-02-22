@@ -2,10 +2,24 @@
 
 // 自定义的头文件
 #include "D3D11Win.h"
+#include "D3D11Exception.h"
 
 class Window
 {
 private:
+    class Exception : public D3D11Exception
+    {
+    public:
+        Exception( int line,const char* file,HRESULT hr ) noexcept;
+        const char* what() const noexcept override;
+        virtual const char* GetType() const noexcept override;
+        static std::string TranslateErrorCode( HRESULT hr ) noexcept;
+        HRESULT GetErrorCode() const noexcept;
+        std::string GetErrorString() const noexcept;
+
+    private:
+        HRESULT hr;
+    };
     // 单例模式，确保一个窗口只有一个窗口类注册
     class WindowClass
     {
@@ -25,7 +39,7 @@ private:
     };
 
 public:
-    Window(int width, int height, const char* name) noexcept;
+    Window(int width, int height, const char* name);
     ~Window();
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
@@ -41,3 +55,7 @@ private:
     int height;
     HWND hWnd;
 };
+
+// 定义宏方便调用
+#define D3D11WND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__,hr)
+#define D3D11WND_LAST_EXCEPT(hr) Window::Exception(__LINE__, __FILE__,GetLastError())

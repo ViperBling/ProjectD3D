@@ -1,8 +1,13 @@
-//
-// Created by Administrator on 2022/2/17.
-//
+#pragma once
+#include <unordered_map>
+#include <Windows.h>
 
-#ifndef D3D11_WINDOWSMESSAGEMAP_H
-#define D3D11_WINDOWSMESSAGEMAP_H
+class WindowsMessageMap
+{
+public:
+    WindowsMessageMap();
+    std::string operator()( DWORD msg,LPARAM lp,WPARAM wp ) const;
 
-#endif //D3D11_WINDOWSMESSAGEMAP_H
+private:
+    std::unordered_map<DWORD,std::string> map;
+};
