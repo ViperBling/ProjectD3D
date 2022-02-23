@@ -12,7 +12,8 @@ set_property(SOURCE ${APP_WINRC} APPEND PROPERTY
 
 add_executable(D3D11
         ${PROJECT_SOURCE_DIR}/Core/WinMain.cpp
-        ${APP_WINRC})
+        ${APP_WINRC}
+        )
 
 target_link_libraries(D3D11 D3D11Lib)
 

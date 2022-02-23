@@ -1,0 +1,3 @@
+﻿#include "Utility/resource.h"
+
+IDI_APPICON ICON DISCARDABLE "AppIcon.ico"
