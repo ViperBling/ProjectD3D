@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <queue>
 #include <bitset>
@@ -60,13 +60,14 @@ private:
     void OnChar(char character) noexcept;
     void ClearState() noexcept;
 
-    template<class T>
+    template<typename T>
     static void TrimBuffer(std::queue<T>& buffer) noexcept;
 
 private:
+    // 256可以完全包括keycode的个数
     static constexpr unsigned int nKeys = 256u;
     static constexpr unsigned int bufferSize = 16u;
-    bool autorepeatEnabled = false;
+    bool bAutorepeatEnabled = false;
     std::bitset<nKeys> keystates;
     std::queue<Event> keybuffer;
     std::queue<char> charbuffer;

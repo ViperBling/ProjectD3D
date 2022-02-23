@@ -17,6 +17,14 @@ int CALLBACK WinMain(
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
+            if (wnd.kbd.KeyIsPressed(VK_SPACE))
+            {
+                MessageBox(nullptr, "I'm Space Bar!", "Space Key Was Pressed!", MB_OK | MB_ICONEXCLAMATION);
+            }
+            if (wnd.mouse.LeftIsPressed())
+            {
+                MessageBox(nullptr, "I'm Mouse!", "Click!", MB_OK | MB_ICONEXCLAMATION);
+            }
         }
 
         if (gResult == -1)

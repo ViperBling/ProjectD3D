@@ -4,7 +4,7 @@
 #include "D3D11Win.h"
 #include "D3D11Exception.h"
 #include "IO/Keyboard.h"
-
+#include "IO/Mouse.h"
 
 class Window
 {
@@ -54,6 +54,7 @@ private:
 
 public:
     Keyboard kbd;
+    Mouse mouse;
 
 private:
     int width;

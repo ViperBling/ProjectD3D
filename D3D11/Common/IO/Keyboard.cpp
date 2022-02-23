@@ -59,17 +59,17 @@ void Keyboard::Flush() noexcept
 
 void Keyboard::EnableAutorepeat() noexcept
 {
-    autorepeatEnabled = true;
+    bAutorepeatEnabled = true;
 }
 
 void Keyboard::DisableAutorepeat() noexcept
 {
-    autorepeatEnabled = false;
+    bAutorepeatEnabled = false;
 }
 
 bool Keyboard::AutorepeatIsEnabled() const noexcept
 {
-    return autorepeatEnabled;
+    return bAutorepeatEnabled;
 }
 
 void Keyboard::OnKeyPressed(unsigned char keycode) noexcept
