@@ -6,12 +6,17 @@ set (CMAKE_CXX_STANDARD 17)
 
 set (CMAKE_CXX_FLAGS -EHsc)
 
-set (WINDOWS_ASSETS_DIR "${PROJECT_SOURCE_DIR}/Assets/")
+set (APP_WINRC ${PROJECT_SOURCE_DIR}/Assets/Icon/AppIcon.rc)
+set_property(SOURCE ${APP_WINRC} APPEND PROPERTY
+        OBJECT_DEPENDS ${PROJECT_SOURCE_DIR}/Assets/Icon/AppIcon.ico)
 
-add_executable(D3D11  WinMain.cpp ${WINDOWS_ASSETS_DIR}/Icon/AppIcon.o)
+add_executable(D3D11
+        ${PROJECT_SOURCE_DIR}/Core/WinMain.cpp
+        ${APP_WINRC})
 
-include_directories(include)
-include_directories(src)
+target_link_libraries(D3D11 D3D11Lib)
 
-include (CTest)
-add_subdirectory(src)
+#include (CTest)
+include_directories(Common)
+
+add_subdirectory(Common)

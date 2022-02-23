@@ -1,9 +1,10 @@
 ﻿#include "Window.h"
+#include "resource.h"
 #include <sstream>
 
 Window::WindowClass Window::WindowClass::wndClass;
 
-const char *Window::WindowClass::GetName() noexcept
+const char* Window::WindowClass::GetName() noexcept
 {
     return wndClassName;
 }
@@ -23,8 +24,16 @@ Window::WindowClass::WindowClass() noexcept  :
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = GetInstance();
-    wc.hIcon = nullptr;
-    wc.hIconSm = nullptr;
+    wc.hIcon = static_cast<HICON>(LoadImage(
+        GetInstance(),
+        MAKEINTRESOURCE(IDI_APPICON),
+        IMAGE_ICON, 32, 32, 0
+        ));
+    wc.hIconSm = static_cast<HICON>(LoadImage(
+        GetInstance(),
+        MAKEINTRESOURCE(IDI_APPICON),
+        IMAGE_ICON, 16, 16, 0
+    ));;
     wc.hCursor = nullptr;
     wc.hbrBackground = nullptr;
     wc.lpszMenuName = nullptr;
