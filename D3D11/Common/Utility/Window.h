@@ -45,6 +45,8 @@ public:
     ~Window();
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
+    // 设置窗口标题
+    void SetTitle(const std::string& title);
 
 private:
     // 通过静态函数调用类成员函数，直接在成员函数中传递WINAPI函数（CALLBACK）是不能正常工作的
@@ -64,4 +66,4 @@ private:
 
 // 定义宏方便调用
 #define D3D11WND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__,hr)
-#define D3D11WND_LAST_EXCEPT(hr) Window::Exception(__LINE__, __FILE__,GetLastError())
+#define D3D11WND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__,GetLastError())

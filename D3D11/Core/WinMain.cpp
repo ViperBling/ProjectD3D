@@ -1,4 +1,5 @@
-﻿#include "Utility/Window.h"
+﻿#include <sstream>
+#include "Utility/Window.h"
 
 int CALLBACK WinMain(
     HINSTANCE hInstance,
@@ -21,9 +22,15 @@ int CALLBACK WinMain(
             {
                 MessageBox(nullptr, "I'm Space Bar!", "Space Key Was Pressed!", MB_OK | MB_ICONEXCLAMATION);
             }
-            if (wnd.mouse.LeftIsPressed())
+            while (!wnd.mouse.IsEmpty())
             {
-                MessageBox(nullptr, "I'm Mouse!", "Click!", MB_OK | MB_ICONEXCLAMATION);
+                const auto event = wnd.mouse.Read();
+                if (event.GetType() == Mouse::Event::Type::Move)
+                {
+                    std::ostringstream oss;
+                    oss << "Mouse Position: (" << event.GetPosX() << ", " << event.GetPosY() << ")";
+                    wnd.SetTitle(oss.str());
+                }
             }
         }
 

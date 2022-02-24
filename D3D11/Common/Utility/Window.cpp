@@ -48,7 +48,9 @@ Window::WindowClass::~WindowClass()
 }
 
 // Window
-Window::Window(int width, int height, const char *name)
+Window::Window(int width, int height, const char *name) :
+    width(width),
+    height(height)
 {
     // 窗口大小
     RECT wr;
@@ -57,7 +59,7 @@ Window::Window(int width, int height, const char *name)
     wr.top = 100;
     wr.bottom = height + wr.top;
 
-    if (FAILED(AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE)))
+    if (AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE) == 0)
     {
         throw D3D11WND_LAST_EXCEPT();
     }
@@ -158,7 +160,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         case WM_MOUSEMOVE:
         {
             const POINTS pt = MAKEPOINTS(lParam);
-            // in client region -> log move, and log enter + capture mouse (if not previously in window)
+            // 在窗口内部时，记录鼠标移动，同时改变鼠标的状态
             if (pt.x >= 0 && pt.x < width && pt.y >= 0 && pt.y < height)
             {
                 mouse.OnMouseMove(pt.x, pt.y);
@@ -169,6 +171,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
                 }
             } else
             {
+                // 如果不在窗口内，但是鼠标按键按下，那么也记录鼠标位置
                 if (wParam & (MK_LBUTTON | MK_RBUTTON))
                 {
                     mouse.OnMouseMove(pt.x, pt.y);
@@ -226,6 +229,14 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         /************** END MOUSE MESSAGES **************/
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void Window::SetTitle(const std::string &title)
+{
+    if (SetWindowText(hWnd, title.c_str()) == 0)
+    {
+        throw D3D11WND_LAST_EXCEPT();
+    }
 }
 
 // Window Exception
