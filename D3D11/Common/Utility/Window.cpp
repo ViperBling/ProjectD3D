@@ -1,6 +1,6 @@
-﻿#include "Window.h"
+﻿#include <sstream>
+#include "Window.h"
 #include "resource.h"
-#include <sstream>
 
 Window::WindowClass Window::WindowClass::wndClass;
 
@@ -81,6 +81,8 @@ Window::Window(int width, int height, const char *name) :
     }
 
     ShowWindow(hWnd, SW_SHOWDEFAULT);
+
+    pGfx = std::make_unique<D3D11Graphics>(hWnd);
 }
 
 Window::~Window()
@@ -254,6 +256,11 @@ std::optional<int> Window::ProcessMessages()
         DispatchMessage(&msg);
     }
     return {};
+}
+
+D3D11Graphics& Window::Gfx()
+{
+    return *pGfx;
 }
 
 // Window Exception

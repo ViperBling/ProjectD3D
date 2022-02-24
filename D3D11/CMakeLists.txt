@@ -4,7 +4,7 @@ project (D3D11)
 set (CMAKE_C_STANDARD 11)
 set (CMAKE_CXX_STANDARD 17)
 
-set (CMAKE_CXX_FLAGS -EHsc)
+# set (CMAKE_CXX_FLAGS -EHsc)
 
 set (APP_WINRC ${PROJECT_SOURCE_DIR}/Assets/Icon/AppIcon.rc)
 set_property(SOURCE ${APP_WINRC} APPEND PROPERTY

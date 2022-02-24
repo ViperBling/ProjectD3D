@@ -1,12 +1,14 @@
 ﻿#pragma once
 
 #include <optional>
+#include <memory>
 
 // 自定义的头文件
 #include "D3D11Win.h"
 #include "D3D11Exception.h"
 #include "IO/Keyboard.h"
 #include "IO/Mouse.h"
+#include "Graphics/D3D11Graphics.h"
 
 class Window
 {
@@ -52,6 +54,8 @@ public:
 
     static std::optional<int> ProcessMessages();
 
+    D3D11Graphics& Gfx();
+
 private:
     // 通过静态函数调用类成员函数，直接在成员函数中传递WINAPI函数（CALLBACK）是不能正常工作的
     static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
@@ -66,6 +70,7 @@ private:
     int width;
     int height;
     HWND hWnd;
+    std::unique_ptr<D3D11Graphics> pGfx;
 };
 
 // 定义宏方便调用

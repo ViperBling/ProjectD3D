@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Utility/Window.h"
+#include "Utility/Timer.h"
 
 class WindowsApplication
 {
@@ -14,4 +15,5 @@ private:
 
 private:
     Window wnd;
+    Timer timer;
 };

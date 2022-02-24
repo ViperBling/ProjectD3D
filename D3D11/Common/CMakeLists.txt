@@ -9,6 +9,8 @@ add_library(D3D11Lib
 
         ${CommonSource}/IO/Keyboard.cpp
         ${CommonSource}/IO/Mouse.cpp
+
+        ${CommonSource}/Graphics/D3D11Graphics.cpp
         )
 
 set_target_properties (D3D11 PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")
