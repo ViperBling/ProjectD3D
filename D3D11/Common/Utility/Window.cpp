@@ -239,6 +239,23 @@ void Window::SetTitle(const std::string &title)
     }
 }
 
+std::optional<int> Window::ProcessMessages()
+{
+    MSG msg;
+    // 队列中有消息时，分发消息
+    while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+    {
+        if (msg.message == WM_QUIT)
+        {
+            return (int)msg.wParam;
+        }
+
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+    return {};
+}
+
 // Window Exception
 Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept :
     D3D11Exception(line, file),

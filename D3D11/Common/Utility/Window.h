@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <optional>
+
 // 自定义的头文件
 #include "D3D11Win.h"
 #include "D3D11Exception.h"
@@ -47,6 +49,8 @@ public:
     Window& operator=(const Window&) = delete;
     // 设置窗口标题
     void SetTitle(const std::string& title);
+
+    static std::optional<int> ProcessMessages();
 
 private:
     // 通过静态函数调用类成员函数，直接在成员函数中传递WINAPI函数（CALLBACK）是不能正常工作的

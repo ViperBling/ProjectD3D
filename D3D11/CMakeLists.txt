@@ -12,6 +12,7 @@ set_property(SOURCE ${APP_WINRC} APPEND PROPERTY
 
 add_executable(D3D11
         ${PROJECT_SOURCE_DIR}/Core/WinMain.cpp
+        ${PROJECT_SOURCE_DIR}/Core/WindowsApplication.cpp
         ${APP_WINRC}
         )
 

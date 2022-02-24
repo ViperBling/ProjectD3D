@@ -3,6 +3,7 @@
 
 add_library(D3D11Lib
         ${CommonSource}/Utility/D3D11Exception.cpp
+        ${CommonSource}/Utility/Timer.cpp
         ${CommonSource}/Utility/Window.cpp
         ${CommonSource}/Utility/WindowsMessageMap.cpp
 

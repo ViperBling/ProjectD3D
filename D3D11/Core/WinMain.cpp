@@ -1,5 +1,4 @@
-﻿#include <sstream>
-#include "Utility/Window.h"
+﻿#include "WindowsApplication.h"
 
 int CALLBACK WinMain(
     HINSTANCE hInstance,
@@ -10,36 +9,7 @@ int CALLBACK WinMain(
 {
     try
     {
-        Window wnd(1280, 720, "ProjectD3D11");
-
-        MSG msg;
-        BOOL gResult;
-        while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-            if (wnd.kbd.KeyIsPressed(VK_SPACE))
-            {
-                MessageBox(nullptr, "I'm Space Bar!", "Space Key Was Pressed!", MB_OK | MB_ICONEXCLAMATION);
-            }
-            while (!wnd.mouse.IsEmpty())
-            {
-                const auto event = wnd.mouse.Read();
-                if (event.GetType() == Mouse::Event::Type::Move)
-                {
-                    std::ostringstream oss;
-                    oss << "Mouse Position: (" << event.GetPosX() << ", " << event.GetPosY() << ")";
-                    wnd.SetTitle(oss.str());
-                }
-            }
-        }
-
-        if (gResult == -1)
-        {
-            return -1;
-        }
-
-        return msg.wParam;
+        return WindowsApplication{}.Run();
     }
     catch (const D3D11Exception& e)
     {
