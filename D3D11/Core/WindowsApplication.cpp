@@ -1,5 +1,7 @@
 ﻿#include "WindowsApplication.h"
 
+#include <cmath>
+
 WindowsApplication::WindowsApplication() :
     wnd(800, 600, "ProjectD3D")
 {}
@@ -18,7 +20,7 @@ int WindowsApplication::Run()
 
 void WindowsApplication::Tick()
 {
-    const float c = sin(timer.Peek()) / 2.0f + 0.5f;
+    const float c = std::sin(timer.Peek()) / 2.0f + 0.5f;
     wnd.Gfx().ClearBuffer( c, c, 1.0f);
     wnd.Gfx().EndFrame();
 }
