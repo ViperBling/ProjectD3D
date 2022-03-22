@@ -264,56 +264,61 @@ D3D11Graphics& Window::Gfx()
 }
 
 // Window Exception
-Window::Exception::Exception(int line, const char* file, HRESULT hr) noexcept :
-    D3D11Exception(line, file),
+std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
+{
+    char* pMsgBuf = nullptr;
+    // windows will allocate memory for err string and make our pointer point to it
+    const DWORD nMsgLen = FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        nullptr, hr, MAKELANGID(LANG_NEUTRAL,SUBLANG_DEFAULT),
+        reinterpret_cast<LPSTR>(&pMsgBuf), 0, nullptr
+    );
+    // 0 string length returned indicates a failure
+    if (nMsgLen == 0)
+    {
+        return "Unidentified error code";
+    }
+    // copy error string from windows-allocated buffer to std::string
+    std::string errorString = pMsgBuf;
+    // free windows buffer
+    LocalFree( pMsgBuf );
+    return errorString;
+}
+
+Window::HRException::HRException(int line, const char *file, HRESULT hr) noexcept :
+    Exception(line, file),
     hr(hr)
 {}
 
-const char* Window::Exception::what() const noexcept
+const char* Window::HRException::what() const noexcept
 {
     std::ostringstream oss;
     oss << GetType() << std::endl
-        << "[Error Code] " << GetErrorCode() << std::endl
-        << "[Description] " << GetErrorString() << std::endl
+        << "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode() << std::dec
+        << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
+        << "[Description] " << GetErrorDescription() << std::endl
         << GetOriginString();
     whatBuffer = oss.str();
     return whatBuffer.c_str();
 }
 
-const char* Window::Exception::GetType() const noexcept
+const char* Window::HRException::GetType() const noexcept
 {
     return "D3D11 Window Exception";
 }
 
-std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
-{
-    char* pMsgBuf = nullptr;
-    // FormatMessage把HRESULT装换成字符串
-    DWORD nMsgLen = FormatMessage(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER |
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_IGNORE_INSERTS,
-        nullptr,
-        hr,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-        reinterpret_cast<LPSTR>(&pMsgBuf),
-        0, nullptr
-        );
-    if (nMsgLen == 0)
-    {
-        return "Unidentified error code";
-    }
-    std::string errorString = pMsgBuf;
-    LocalFree(pMsgBuf);
-    return errorString;
-}
-
-HRESULT Window::Exception::GetErrorCode() const noexcept
+HRESULT Window::HRException::GetErrorCode() const noexcept
 {
     return hr;
 }
 
-std::string Window::Exception::GetErrorString() const noexcept
+std::string Window::HRException::GetErrorDescription() const noexcept
 {
     return TranslateErrorCode(hr);
+}
+
+const char* Window::NoGfxException::GetType() const noexcept
+{
+    return "Chili Window Exception [No Graphics]";
 }

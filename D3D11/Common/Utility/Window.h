@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include <optional>
-#include <memory>
-
 // 自定义的头文件
 #include "D3D11Win.h"
 #include "D3D11Exception.h"
@@ -10,22 +7,40 @@
 #include "IO/Mouse.h"
 #include "Graphics/D3D11Graphics.h"
 
+#include <optional>
+#include <memory>
+
 class Window
 {
-private:
+public:
     class Exception : public D3D11Exception
     {
+        using D3D11Exception::D3D11Exception;
     public:
-        Exception( int line, const char* file, HRESULT hr ) noexcept;
+        static std::string TranslateErrorCode(HRESULT hr) noexcept;
+    };
+
+    class HRException : public Exception
+    {
+    public:
+        HRException( int line, const char* file, HRESULT hr ) noexcept;
         const char* what() const noexcept override;
-        virtual const char* GetType() const noexcept;
-        static std::string TranslateErrorCode( HRESULT hr ) noexcept;
+        const char* GetType() const noexcept override;
         HRESULT GetErrorCode() const noexcept;
-        std::string GetErrorString() const noexcept;
+        std::string GetErrorDescription() const noexcept;
 
     private:
         HRESULT hr;
     };
+
+    class NoGfxException : public Exception
+    {
+    public:
+        using Exception::Exception;
+        const char* GetType() const noexcept override;
+    };
+
+private:
     // 单例模式，确保一个窗口只有一个窗口类注册
     class WindowClass
     {
@@ -75,4 +90,5 @@ private:
 
 // 定义宏方便调用
 #define D3D11WND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__,hr)
-#define D3D11WND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__,GetLastError())
+#define D3D11WND_LAST_EXCEPT() Window::HRException(__LINE__, __FILE__,GetLastError())
+#define D3D11WND_NOGFX_EXCEPT() Window::NoGfxException( __LINE__,__FILE__ )
