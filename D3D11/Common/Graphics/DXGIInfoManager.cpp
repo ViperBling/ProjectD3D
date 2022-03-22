@@ -30,15 +30,7 @@ DXGIInfoManager::DXGIInfoManager()
     GFX_THROW_NOINFO(
         DxgiGetDebugInterface(
             __uuidof(IDXGIInfoQueue),
-            reinterpret_cast<void**>(&pDXGIInfoQueue) ) );
-}
-
-DXGIInfoManager::~DXGIInfoManager()
-{
-    if( pDXGIInfoQueue != nullptr )
-    {
-        pDXGIInfoQueue->Release();
-    }
+            &pDXGIInfoQueue ) );
 }
 
 void DXGIInfoManager::Set() noexcept

@@ -260,6 +260,10 @@ std::optional<int> Window::ProcessMessages()
 
 D3D11Graphics& Window::Gfx()
 {
+    if( !pGfx )
+    {
+        throw D3D11WND_NOGFX_EXCEPT();
+    }
     return *pGfx;
 }
 
@@ -315,10 +319,10 @@ HRESULT Window::HRException::GetErrorCode() const noexcept
 
 std::string Window::HRException::GetErrorDescription() const noexcept
 {
-    return TranslateErrorCode(hr);
+    return Exception::TranslateErrorCode(hr);
 }
 
 const char* Window::NoGfxException::GetType() const noexcept
 {
-    return "Chili Window Exception [No Graphics]";
+    return "D3D11 Window Exception [No Graphics]";
 }

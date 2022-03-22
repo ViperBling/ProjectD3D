@@ -2,6 +2,8 @@
 #include "Utility/dxerr.h"
 #include <sstream>
 
+namespace wrl = Microsoft::WRL;
+
 // graphics exception checking/throwing macros (some with dxgi infos)
 #define GFX_EXCEPT_NOINFO(hr) D3D11Graphics::HRException( __LINE__, __FILE__, (hr) )
 #define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw D3D11Graphics::HRException(__LINE__, __FILE__, hr)
@@ -11,9 +13,9 @@
 #define GFX_THROW_INFO(hrcall) infoManager.Set(); if( FAILED( hr = (hrcall) ) ) throw GFX_EXCEPT(hr)
 #define GFX_DEVICE_REMOVED_EXCEPT(hr) D3D11Graphics::DeviceRemovedException(__LINE__, __FILE__, (hr), infoManager.GetMessages())
 #else
-#define GFX_EXCEPT(hr) Graphics::HRException(__LINE__, __FILE__, (hr) )
+#define GFX_EXCEPT(hr) D3D11Graphics::HRException(__LINE__, __FILE__, (hr) )
 #define GFX_THROW_INFO(hrcall) GFX_THROW_NOINFO(hrcall)
-#define GFX_DEVICE_REMOVED_EXCEPT(hr) Graphics::DeviceRemovedException(__LINE__, __FILE__, (hr))
+#define GFX_DEVICE_REMOVED_EXCEPT(hr) D3D11Graphics::DeviceRemovedException(__LINE__, __FILE__, (hr))
 #endif
 
 D3D11Graphics::D3D11Graphics(HWND hWnd)
@@ -62,34 +64,39 @@ D3D11Graphics::D3D11Graphics(HWND hWnd)
 
 
     // gain access to texture subresource in swap chain (back buffer)
-    ID3D11Resource* pBackBuffer = nullptr;
+    wrl::ComPtr<ID3D11Resource> pBackBuffer;
     GFX_THROW_INFO( pSwap->GetBuffer(
         0,
         __uuidof(ID3D11Resource),
-        reinterpret_cast<void**>(&pBackBuffer) ) );
+        &pBackBuffer) );
     GFX_THROW_INFO( pDevice->CreateRenderTargetView(
-        pBackBuffer,
+        pBackBuffer.Get(),
         nullptr, &pRenderTraget ) );
-    pBackBuffer->Release();
-}
-
-D3D11Graphics::~D3D11Graphics()
-{
-    if (pRenderTraget != nullptr) pRenderTraget->Release();
-    if (pContext != nullptr) pContext->Release();
-    if (pSwap != nullptr) pSwap->Release();
-    if (pDevice != nullptr) pDevice->Release();
 }
 
 void D3D11Graphics::EndFrame()
 {
-    pSwap->Present(1u, 0u);
+    HRESULT hr;
+#ifndef NDEBUG
+    infoManager.Set();
+#endif
+    if( FAILED( hr = pSwap->Present( 1u,0u ) ) )
+    {
+        if( hr == DXGI_ERROR_DEVICE_REMOVED )
+        {
+            throw GFX_DEVICE_REMOVED_EXCEPT( pDevice->GetDeviceRemovedReason() );
+        }
+        else
+        {
+            throw GFX_EXCEPT( hr );
+        }
+    }
 }
 
 void D3D11Graphics::ClearBuffer(float r, float g, float b) noexcept
 {
     const float color[] = {r, g, b, 1.0f};
-    pContext->ClearRenderTargetView(pRenderTraget, color);
+    pContext->ClearRenderTargetView(pRenderTraget.Get(), color);
 }
 
 D3D11Graphics::HRException::HRException(
@@ -98,7 +105,19 @@ D3D11Graphics::HRException::HRException(
     std::vector<std::string> infoMsgs) noexcept :
     Exception(line, file),
     hr(hr)
-{}
+{
+    // join all info messages with newlines into single string
+    for( const auto& m : infoMsgs )
+    {
+        info += m;
+        info.push_back( '\n' );
+    }
+    // remove final newline if exists
+    if( !info.empty() )
+    {
+        info.pop_back();
+    }
+}
 
 const char *D3D11Graphics::HRException::what() const noexcept
 {
