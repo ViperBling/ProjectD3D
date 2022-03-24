@@ -18,6 +18,28 @@ add_executable(D3D11
 
 target_link_libraries(D3D11 D3D11Lib)
 
+# Build HLSL shaders
+add_custom_target(Shaders)
+
+set(HLSL_SHADER_FILES Shaders/VertexShader.hlsl Shaders/PixelShader.hlsl)
+
+set_source_files_properties(Shaders/VertexShader.hlsl PROPERTIES ShaderType "vs")
+set_source_files_properties(Shaders/PixelShader.hlsl PROPERTIES ShaderType "ps")
+set_source_files_properties(${HLSL_SHADER_FILES} PROPERTIES ShaderModel "5_0")
+
+foreach(FILE ${HLSL_SHADER_FILES})
+ get_filename_component(FILE_WE ${FILE} NAME_WE)
+ get_source_file_property(shadertype ${FILE} ShaderType)
+ get_source_file_property(shadermodel ${FILE} ShaderModel)
+ add_custom_command(TARGET Shaders
+     COMMAND fxc.exe /nologo /Emain /T${shadertype}_${shadermodel} $<$<CONFIG:DEBUG>:/Od> /Zi /Fo ${PROJECT_SOURCE_DIR}/Shaders/${FILE_WE}.cso /Fd ${PROJECT_SOURCE_DIR}/Shaders/${FILE_WE}.pdb ${FILE}
+     MAIN_DEPENDENCY ${FILE}
+     COMMENT "HLSL ${FILE}"
+     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+     VERBATIM)
+endforeach(FILE)
+add_dependencies(${PROJECT_NAME} Shaders)
+
 #include (CTest)
 include_directories(Common)
 

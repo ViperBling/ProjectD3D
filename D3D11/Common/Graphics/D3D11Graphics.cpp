@@ -139,11 +139,23 @@ void D3D11Graphics::DrawTestTriangle()
     // 绑定顶点缓冲
     const UINT stride = sizeof(Vertex);
     const UINT offset = 0u;
-    pContext->IASetVertexBuffers(0u, 1u, &pVertexBuffer, &stride, &offset);
+    pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+
+    // 创建PS
+    wrl::ComPtr<ID3D11PixelShader> pPixelShader;
+    wrl::ComPtr<ID3DBlob> pBlob;
+    GFX_THROW_INFO(D3DReadFileToBlob(L"../../Shaders/PixelShader.cso", &pBlob));
+    GFX_THROW_INFO(pDevice->CreatePixelShader(
+        pBlob->GetBufferPointer(),
+        pBlob->GetBufferSize(),
+        nullptr,
+        &pPixelShader));
+    // 绑定PS
+    pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
 
     // 创建VS
     wrl::ComPtr<ID3D11VertexShader> pVertexShader;
-    wrl::ComPtr<ID3DBlob> pBlob;
+
     GFX_THROW_INFO(D3DReadFileToBlob(L"../../Shaders/VertexShader.cso", &pBlob));
     GFX_THROW_INFO(pDevice->CreateVertexShader(
         pBlob->GetBufferPointer(),
@@ -153,6 +165,39 @@ void D3D11Graphics::DrawTestTriangle()
 
     // 绑定VS
     pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u);
+
+    // input layout
+    wrl::ComPtr<ID3D11InputLayout> pInputLayout;
+    const D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = {
+        {"Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+    };
+
+    GFX_THROW_INFO(pDevice->CreateInputLayout(
+        inputElementDesc,
+        (UINT)std::size(inputElementDesc),
+        pBlob->GetBufferPointer(),
+        pBlob->GetBufferSize(),
+        &pInputLayout
+        ));
+
+    // bind vertex layout
+    pContext->IASetInputLayout(pInputLayout.Get());
+
+    // bind render target
+    pContext->OMSetRenderTargets(1u, pRenderTraget.GetAddressOf(), nullptr);
+
+    // Set primitive topology to triangle list (groups of 3 vertices)
+    pContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+
+    // configure viewport
+    D3D11_VIEWPORT viewport;
+    viewport.Width = 800;
+    viewport.Height = 600,
+    viewport.MinDepth = 0;
+    viewport.MaxDepth = 1;
+    viewport.TopLeftX = 0;
+    viewport.TopLeftY = 0;
+    pContext->RSSetViewports(1u, &viewport);
 
     GFX_THROW_INFO_ONLY(pContext->Draw((UINT)std::size(vertices), 0u));
 }
