@@ -116,26 +116,19 @@ void D3D11Graphics::DrawTestTriangle(float angle, float x, float y)
             float y;
             float z;
         } pos;
-        struct
-        {
-            unsigned char r;
-            unsigned char g;
-            unsigned char b;
-            unsigned char a;
-        } color;
     };
 
     // 创建顶点缓冲
     Vertex vertices[] =
     {
-        {-1.0f, -1.0f, -1.0f,  255, 0,   0},
-        { 1.0f, -1.0f, -1.0f,  0,   255, 0},
-        {-1.0f,  1.0f, -1.0f,  0,   0,   255},
-        { 1.0f,  1.0f, -1.0f,  255, 255, 0},
-        {-1.0f, -1.0f,  1.0f,  255, 0,   255},
-        { 1.0f, -1.0f,  1.0f,  0,   255, 255},
-        {-1.0f,  1.0f,  1.0f,  0,   0,   0},
-        { 1.0f,  1.0f,  1.0f,  255, 255, 255},
+        {-1.0f, -1.0f, -1.0f},
+        { 1.0f, -1.0f, -1.0f},
+        {-1.0f,  1.0f, -1.0f},
+        { 1.0f,  1.0f, -1.0f},
+        {-1.0f, -1.0f,  1.0f},
+        { 1.0f, -1.0f,  1.0f},
+        {-1.0f,  1.0f,  1.0f},
+        { 1.0f,  1.0f,  1.0f},
     };
     // 创建Buffer
     wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
@@ -211,6 +204,42 @@ void D3D11Graphics::DrawTestTriangle(float angle, float x, float y)
     // 绑定Constant Buffer
     pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
 
+    struct ConstantBufferPS
+    {
+        struct
+        {
+            float r;
+            float g;
+            float b;
+            float a;
+        } faceColors[6];
+    };
+
+    const ConstantBufferPS cbufferPS = {
+        {
+            {1.0f,0.0f,1.0f},
+            {1.0f,0.0f,0.0f},
+            {0.0f,1.0f,0.0f},
+            {0.0f,0.0f,1.0f},
+            {1.0f,1.0f,0.0f},
+            {0.0f,1.0f,1.0f},
+        }
+    };
+    wrl::ComPtr<ID3D11Buffer> pConstantBufferPS;
+    D3D11_BUFFER_DESC cBufferDescPS;
+    cBufferDescPS.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    cBufferDescPS.Usage = D3D11_USAGE_DYNAMIC;
+    cBufferDescPS.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    cBufferDescPS.MiscFlags = 0u;
+    cBufferDescPS.ByteWidth = sizeof(cbufferPS);
+    cBufferDescPS.StructureByteStride = 0u;
+    D3D11_SUBRESOURCE_DATA  constantSubDataPS = {};
+    constantSubDataPS.pSysMem = &cbufferPS;
+    GFX_THROW_INFO(pDevice->CreateBuffer(&cBufferDescPS, &constantSubDataPS, &pConstantBufferPS));
+
+    // 绑定Constant Buffer
+    pContext->PSSetConstantBuffers(0u, 1u, pConstantBufferPS.GetAddressOf());
+
     // 创建PS
     wrl::ComPtr<ID3D11PixelShader> pPixelShader;
     wrl::ComPtr<ID3DBlob> pBlob;
@@ -239,8 +268,7 @@ void D3D11Graphics::DrawTestTriangle(float angle, float x, float y)
     // input layout
     wrl::ComPtr<ID3D11InputLayout> pInputLayout;
     const D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = {
-        {"Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12u, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
     };
 
     GFX_THROW_INFO(pDevice->CreateInputLayout(
