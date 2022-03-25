@@ -2,6 +2,7 @@
 #include "Utility/dxerr.h"
 #include <sstream>
 #include <d3dcompiler.h>
+#include <cmath>
 
 namespace wrl = Microsoft::WRL;
 
@@ -101,7 +102,7 @@ void D3D11Graphics::ClearBuffer(float r, float g, float b) noexcept
     pContext->ClearRenderTargetView(pRenderTraget.Get(), color);
 }
 
-void D3D11Graphics::DrawTestTriangle()
+void D3D11Graphics::DrawTestTriangle(float angle)
 {
     HRESULT hr;
 
@@ -129,7 +130,7 @@ void D3D11Graphics::DrawTestTriangle()
         {-0.5f, -0.5f, 0,   0,   255, 0},
         {-0.3f,  0.3f, 0,   255, 0,   0},
         { 0.3f,  0.3f, 0,   0,   255, 0},
-        { 0.0f, -0.8f, 255, 0,   0,   0},
+        { 0.0f, -1.0f, 255, 0,   0,   0},
     };
     // 创建Buffer
     wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
@@ -172,6 +173,37 @@ void D3D11Graphics::DrawTestTriangle()
     GFX_THROW_INFO(pDevice->CreateBuffer(&indexBufferDesc, &indexSubData, &pIndexBuffer));
     // 绑定IndexBuffer
     pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+
+    // 创建Constant buffer
+    struct ConstantBuffer
+    {
+        struct
+        {
+            float element[4][4];
+        } transformation;
+    };
+    const ConstantBuffer cbuffer = {
+        {
+             (3.0f / 4.0f) * std::cos(angle), std::sin(angle), 0.0f, 0.0f,
+            -(3.0f / 4.0f) * std::sin(angle), std::cos(angle), 0.0f, 0.0f,
+             0.0f,                                0.0f,                1.0f, 0.0f,
+             0.0f,                                0.0f,                0.0f, 1.0f
+        }
+    };
+    wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
+    D3D11_BUFFER_DESC cBufferDesc;
+    cBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    cBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    cBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    cBufferDesc.MiscFlags = 0u;
+    cBufferDesc.ByteWidth = sizeof(cbuffer);
+    cBufferDesc.StructureByteStride = 0u;
+    D3D11_SUBRESOURCE_DATA  constantSubData = {};
+    constantSubData.pSysMem = &cbuffer;
+    GFX_THROW_INFO(pDevice->CreateBuffer(&cBufferDesc, &constantSubData, &pConstantBuffer));
+
+    // 绑定Constant Buffer
+    pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
 
     // 创建PS
     wrl::ComPtr<ID3D11PixelShader> pPixelShader;
