@@ -1,5 +1,5 @@
-﻿#include "Mouse.h"
-#include <Windows.h>
+﻿#include "Utility/D3D11Win.h"
+#include "Mouse.h"
 
 std::pair<int, int> Mouse::GetPos() const noexcept
 {
@@ -31,17 +31,15 @@ bool Mouse::RightIsPressed() const noexcept
     return bRightIsPressed;
 }
 
-Mouse::Event Mouse::Read() noexcept
+std::optional<Mouse::Event> Mouse::Read() noexcept
 {
     if (!buffer.empty())
     {
         Mouse::Event event = buffer.front();
         buffer.pop();
         return event;
-    } else
-    {
-        return {};
     }
+    return {};
 }
 
 void Mouse::Flush() noexcept
@@ -118,7 +116,7 @@ void Mouse::OnWheelDown(int newX, int newY) noexcept
 
 void Mouse::TrimBuffer() noexcept
 {
-    while( buffer.size() > bufferSize )
+    while (buffer.size() > bufferSize)
     {
         buffer.pop();
     }
