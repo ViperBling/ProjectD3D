@@ -1,0 +1,1 @@
+#cmakedefine IS_DEBUG @IS_DEBUG@

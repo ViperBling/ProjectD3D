@@ -1,7 +1,7 @@
 #include "DXGIInfoManager.h"
 #include "Utility/Window.h"
-#include "Utility/WindowsThrowMacros.h"
-#include "Utility/GraphicsThrowMarcos.h"
+#include "Utility/Marcos/WindowsThrowMacros.h"
+#include "Utility/Marcos/GraphicsThrowMarcos.h"
 #include "D3D11Graphics.h"
 #include <dxgidebug.h>
 #include <memory>

@@ -1,19 +1,19 @@
 ﻿set (CommonSource ${PROJECT_SOURCE_DIR}/Common)
 
-
 add_library(D3D11Lib
-        ${CommonSource}/Utility/D3D11Exception.cpp
-        ${CommonSource}/Utility/Timer.cpp
-        ${CommonSource}/Utility/Window.cpp
-        ${CommonSource}/Utility/WindowsMessageMap.cpp
-        ${CommonSource}/Utility/dxerr.cpp
+    ${CommonSource}/Utility/D3D11Exception.cpp
+    ${CommonSource}/Utility/Timer.cpp
+    ${CommonSource}/Utility/Window.cpp
+    ${CommonSource}/Utility/WindowsMessageMap.cpp
+    ${CommonSource}/Utility/dxerr.cpp
 
-        ${CommonSource}/IO/Keyboard.cpp
-        ${CommonSource}/IO/Mouse.cpp
+    ${CommonSource}/IO/Keyboard.cpp
+    ${CommonSource}/IO/Mouse.cpp
 
-        ${CommonSource}/Graphics/D3D11Graphics.cpp
-        ${CommonSource}/Graphics/DXGIInfoManager.cpp
-        )
+    ${CommonSource}/Graphics/Bindable/Bindable.cpp
+    ${CommonSource}/Graphics/D3D11Graphics.cpp
+    ${CommonSource}/Graphics/DXGIInfoManager.cpp
+)
 
 set_target_properties (D3D11 PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")
 set_target_properties (D3D11 PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:windows")
