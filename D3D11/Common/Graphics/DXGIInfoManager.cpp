@@ -1,10 +1,10 @@
 #include "DXGIInfoManager.h"
 #include "Utility/Window.h"
+#include "Utility/WindowsThrowMacros.h"
+#include "Utility/GraphicsThrowMarcos.h"
 #include "D3D11Graphics.h"
 #include <dxgidebug.h>
 #include <memory>
-
-#define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw D3D11Graphics::HRException(__LINE__, __FILE__, hr)
 
 DXGIInfoManager::DXGIInfoManager()
 {
