@@ -3,8 +3,10 @@
 #include <sstream>
 #include <d3dcompiler.h>
 #include <cmath>
+#include <DirectXMath.h>
 
 namespace wrl = Microsoft::WRL;
+namespace dx = DirectX;
 
 // graphics exception checking/throwing macros (some with dxgi infos)
 #define GFX_EXCEPT_NOINFO(hr) D3D11Graphics::HRException( __LINE__, __FILE__, (hr) )
@@ -102,7 +104,7 @@ void D3D11Graphics::ClearBuffer(float r, float g, float b) noexcept
     pContext->ClearRenderTargetView(pRenderTraget.Get(), color);
 }
 
-void D3D11Graphics::DrawTestTriangle(float angle)
+void D3D11Graphics::DrawTestTriangle(float angle, float x, float y)
 {
     HRESULT hr;
 
@@ -177,17 +179,15 @@ void D3D11Graphics::DrawTestTriangle(float angle)
     // 创建Constant buffer
     struct ConstantBuffer
     {
-        struct
-        {
-            float element[4][4];
-        } transformation;
+        dx::XMMATRIX transform;
     };
     const ConstantBuffer cbuffer = {
         {
-             (3.0f / 4.0f) * std::cos(angle), std::sin(angle), 0.0f, 0.0f,
-            -(3.0f / 4.0f) * std::sin(angle), std::cos(angle), 0.0f, 0.0f,
-             0.0f,                                0.0f,                1.0f, 0.0f,
-             0.0f,                                0.0f,                0.0f, 1.0f
+             dx::XMMatrixTranspose(
+                 dx::XMMatrixRotationZ(angle) *
+                 dx::XMMatrixScaling(3.0f / 4.0f, 1.0f, 1.0f) *
+                 dx::XMMatrixTranslation(x, y, 0.0f)
+                 )
         }
     };
     wrl::ComPtr<ID3D11Buffer> pConstantBuffer;

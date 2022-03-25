@@ -63,7 +63,7 @@ public:
     void ClearBuffer(float r, float g, float b) noexcept;
 
     // Just a Test
-    void DrawTestTriangle(float angle);
+    void DrawTestTriangle(float angle, float x, float y);
 
 private:
 #ifndef NDEBUG
