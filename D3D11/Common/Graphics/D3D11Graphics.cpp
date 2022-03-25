@@ -107,21 +107,30 @@ void D3D11Graphics::DrawTestTriangle()
 
     struct Vertex
     {
-        float x;
-        float y;
-        float r;
-        float g;
-        float b;
+        struct
+        {
+            float x;
+            float y;
+        } pos;
+        struct
+        {
+            unsigned char r;
+            unsigned char g;
+            unsigned char b;
+            unsigned char a;
+        } color;
     };
 
     // 创建顶点缓冲
-    const Vertex vertices[] =
+    Vertex vertices[] =
     {
-        { 0.0f,  0.5f, 1.0f, 0.0f, 0.0f},
-        { 0.5f, -0.5f, 0.0f, 1.0f, 0.0f},
-        {-0.5f, -0.5f, 0.0f, 0.0f, 1.0f},
+        { 0.0f,  0.5f, 255, 0,   0,   0},
+        { 0.5f, -0.5f, 0,   255, 0,   0},
+        {-0.5f, -0.5f, 0,   0,   255, 0},
+        {-0.3f,  0.3f, 0,   255, 0,   0},
+        { 0.3f,  0.3f, 0,   0,   255, 0},
+        { 0.0f, -0.8f, 255, 0,   0,   0},
     };
-
     // 创建Buffer
     wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
     D3D11_BUFFER_DESC bufferDesc = {};
@@ -142,6 +151,27 @@ void D3D11Graphics::DrawTestTriangle()
     const UINT stride = sizeof(Vertex);
     const UINT offset = 0u;
     pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+
+    // 创建Index Buffer
+    const unsigned short indices[] = {
+        0, 1, 2,
+        0, 2, 3,
+        0, 4, 1,
+        2, 1, 5,
+    };
+    wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
+    D3D11_BUFFER_DESC indexBufferDesc = {};
+    indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    indexBufferDesc.CPUAccessFlags = 0u;
+    indexBufferDesc.MiscFlags = 0u;
+    indexBufferDesc.ByteWidth = sizeof(indices);
+    indexBufferDesc.StructureByteStride = sizeof(unsigned short);
+    D3D11_SUBRESOURCE_DATA indexSubData = {};
+    indexSubData.pSysMem = indices;
+    GFX_THROW_INFO(pDevice->CreateBuffer(&indexBufferDesc, &indexSubData, &pIndexBuffer));
+    // 绑定IndexBuffer
+    pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
 
     // 创建PS
     wrl::ComPtr<ID3D11PixelShader> pPixelShader;
@@ -172,7 +202,7 @@ void D3D11Graphics::DrawTestTriangle()
     wrl::ComPtr<ID3D11InputLayout> pInputLayout;
     const D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = {
         {"Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        {"Color", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 8u, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        {"Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, 8u, D3D11_INPUT_PER_VERTEX_DATA, 0},
     };
 
     GFX_THROW_INFO(pDevice->CreateInputLayout(
@@ -202,7 +232,7 @@ void D3D11Graphics::DrawTestTriangle()
     viewport.TopLeftY = 0;
     pContext->RSSetViewports(1u, &viewport);
 
-    GFX_THROW_INFO_ONLY(pContext->Draw((UINT)std::size(vertices), 0u));
+    GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u));
 }
 
 D3D11Graphics::HRException::HRException(
