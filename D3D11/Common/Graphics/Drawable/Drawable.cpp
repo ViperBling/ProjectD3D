@@ -4,9 +4,13 @@
 #include <cassert>
 #include <typeinfo>
 
-void Drawable::Draw(D3D11Graphics &gfx) const noexcept(false)
+void Drawable::Draw(D3D11Graphics &gfx) const noexcept(!IS_DEBUG)
 {
     for (auto& b : binds)
+    {
+        b->Bind(gfx);
+    }
+    for (auto& b : GetStaticBinds())
     {
         b->Bind(gfx);
     }
@@ -19,7 +23,7 @@ void Drawable::AddBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG)
     binds.push_back(std::move(bind));
 }
 
-void Drawable::AddIndexBuffer(std::unique_ptr<IndexBuffer> idBuffer) noexcept
+void Drawable::AddIndexBuffer(std::unique_ptr<IndexBuffer> idBuffer) noexcept(!IS_DEBUG)
 {
     assert("Attempting to add index buffer a second time" && pIndexBuffer == nullptr);
     pIndexBuffer = idBuffer.get();

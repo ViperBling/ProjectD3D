@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Bindable.h"
 #include "Utility/Marcos/GraphicsThrowMarcos.h"
@@ -7,6 +7,7 @@ template<typename T>
 class ConstantBuffer : public Bindable
 {
 public:
+    // 每帧更新，为了避免每帧创建内容，用map和unmap的方式实现内存的更新
     void Update(D3D11Graphics& gfx, const T& consts)
     {
         INFOMAN(gfx);
@@ -22,6 +23,7 @@ public:
         GetContext(gfx)->Unmap(pConstantBuffer.Get(), 0u);
     }
 
+    // 根据指定内容创建ConstantBuffer
     ConstantBuffer(D3D11Graphics& gfx, const T& consts)
     {
         INFOMAN(gfx);
@@ -39,7 +41,8 @@ public:
         GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&cBufferDesc, &cSRD, &pConstantBuffer));
     }
 
-    ConstantBuffer(D3D11Graphics& gfx)
+    // 默认的创建类型
+    explicit ConstantBuffer(D3D11Graphics& gfx)
     {
         INFOMAN(gfx);
 
@@ -61,6 +64,7 @@ protected:
 template<typename T>
 class VertexConstantBuffer : public ConstantBuffer<T>
 {
+    // 可以使用this指针的方式调用GetContext，也可以在这里using声明来调用
     using ConstantBuffer<T>::pConstantBuffer;
     using Bindable::GetContext;
 
@@ -75,6 +79,7 @@ public:
 template<typename T>
 class PixelConstantBuffer : public ConstantBuffer<T>
 {
+    // 可以使用this指针的方式调用GetContext，也可以在这里using声明来调用
     using ConstantBuffer<T>::pConstantBuffer;
     using Bindable::GetContext;
 
