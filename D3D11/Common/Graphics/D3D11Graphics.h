@@ -1,15 +1,21 @@
 ﻿#pragma once
 
+#include "CMakeConfig.h"
 #include "Utility/D3D11Win.h"
 #include "Utility/D3D11Exception.h"
 #include "DXGIInfoManager.h"
 
 #include <wrl.h>
 #include <d3d11.h>
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
 #include <vector>
+#include <memory>
+#include <random>
 
 class D3D11Graphics
 {
+    friend class Bindable;
 public:
     class Exception : public D3D11Exception
     {
@@ -62,10 +68,12 @@ public:
     void EndFrame();
     void ClearBuffer(float r, float g, float b) noexcept;
 
-    // Just a Test
-    void DrawTestTriangle(float angle, float x, float z);
+    void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
+    void SetProjection(DirectX::XMMATRIX proj) noexcept;
+    DirectX::XMMATRIX GetProjection() const noexcept;
 
 private:
+    DirectX::XMMATRIX projection;
 #ifndef NDEBUG
     DXGIInfoManager infoManager;
 #endif

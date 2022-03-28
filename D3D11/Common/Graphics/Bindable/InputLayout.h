@@ -1,14 +1,16 @@
-//
-// Created by Administrator on 2022/3/25.
-//
+#pragma once
 
-#ifndef D3D11_INPUTLAYOUT_H
-#define D3D11_INPUTLAYOUT_H
+#include "Bindable.h"
 
+class InputLayout : public Bindable
+{
+public:
+    InputLayout(
+        D3D11Graphics& gfx,
+        const std::vector<D3D11_INPUT_ELEMENT_DESC>& layout,
+        ID3DBlob* pVertexShaderByteCode);
+    void Bind(D3D11Graphics& gfx) noexcept override;
 
-class InputLayout {
-
+protected:
+    Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
 };
-
-
-#endif //D3D11_INPUTLAYOUT_H

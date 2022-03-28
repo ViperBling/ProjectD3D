@@ -9,6 +9,7 @@ public:
     WindowsApplication();
     // master frame / message loop
     int Run();
+    ~WindowsApplication();
 
 private:
     void Tick();
@@ -16,4 +17,5 @@ private:
 private:
     Window wnd;
     Timer timer;
+    std::vector<std::unique_ptr<class Box>> boxes;
 };

@@ -1,14 +1,15 @@
-//
-// Created by Administrator on 2022/3/25.
-//
+#pragma once
+#include "ConstantBuffers.h"
+#include "Graphics/Drawable/Drawable.h"
+#include <DirectXMath.h>
 
-#ifndef D3D11_TRANSFORMCBUFFER_H
-#define D3D11_TRANSFORMCBUFFER_H
+class TransformCBuffer : public Bindable
+{
+public:
+    TransformCBuffer(D3D11Graphics& gfx, const Drawable& parent);
+    void Bind(D3D11Graphics& gfx) noexcept override;
 
-
-class TransformCBuffer {
-
+private:
+    VertexConstantBuffer<DirectX::XMMATRIX> vcBuffer;
+    const Drawable& parent;
 };
-
-
-#endif //D3D11_TRANSFORMCBUFFER_H

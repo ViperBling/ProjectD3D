@@ -1,14 +1,32 @@
-//
-// Created by Administrator on 2022/3/25.
-//
+#pragma once
+#include "Drawable.h"
 
-#ifndef D3D11_BOX_H
-#define D3D11_BOX_H
+class Box : public Drawable
+{
+public:
+    Box(D3D11Graphics& gfx, std::mt19937& rng,
+        std::uniform_real_distribution<float>& adist,
+        std::uniform_real_distribution<float>& ddist,
+        std::uniform_real_distribution<float>& odist,
+        std::uniform_real_distribution<float>& rdist
+    );
+    void Update(float DeltaTime) noexcept override;
+    DirectX::XMMATRIX GetTransformXM() const noexcept override;
 
-
-class Box {
-
+private:
+    // positional
+    float r;
+    float roll = 0.0f;
+    float pitch = 0.0f;
+    float yaw = 0.0f;
+    float theta;
+    float phi;
+    float chi;
+    // speed (delta/s)
+    float droll;
+    float dpitch;
+    float dyaw;
+    float dtheta;
+    float dphi;
+    float dchi;
 };
-
-
-#endif //D3D11_BOX_H

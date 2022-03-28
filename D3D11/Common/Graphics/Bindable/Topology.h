@@ -1,14 +1,12 @@
-//
-// Created by Administrator on 2022/3/25.
-//
+#pragma once
+#include "Bindable.h"
 
-#ifndef D3D11_TOPOLOGY_H
-#define D3D11_TOPOLOGY_H
+class Topology : public Bindable
+{
+public:
+    Topology(D3D11Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type);
+    void Bind(D3D11Graphics& gfx) noexcept override;
 
-
-class Topology {
-
+protected:
+    D3D11_PRIMITIVE_TOPOLOGY type;
 };
-
-
-#endif //D3D11_TOPOLOGY_H

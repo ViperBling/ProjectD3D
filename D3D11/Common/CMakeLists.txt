@@ -1,18 +1,29 @@
 ﻿set (CommonSource ${PROJECT_SOURCE_DIR}/Common)
 
+aux_source_directory(${CommonSource}/Utility Utility_Source)
+aux_source_directory(${CommonSource}/Graphics Graphics_Source)
+aux_source_directory(${CommonSource}/Graphics/Bindable Bindable_Source)
+aux_source_directory(${CommonSource}/Graphics/Drawable Drawable_Source)
+aux_source_directory(${CommonSource}/IO IO_Source)
+
 add_library(D3D11Lib
-    ${CommonSource}/Utility/D3D11Exception.cpp
-    ${CommonSource}/Utility/Timer.cpp
-    ${CommonSource}/Utility/Window.cpp
-    ${CommonSource}/Utility/WindowsMessageMap.cpp
-    ${CommonSource}/Utility/dxerr.cpp
+#    ${CommonSource}/Utility/D3D11Exception.cpp
+#    ${CommonSource}/Utility/Timer.cpp
+#    ${CommonSource}/Utility/Window.cpp
+#    ${CommonSource}/Utility/WindowsMessageMap.cpp
+#    ${CommonSource}/Utility/dxerr.cpp
+    ${Utility_Source}
 
-    ${CommonSource}/IO/Keyboard.cpp
-    ${CommonSource}/IO/Mouse.cpp
+#    ${CommonSource}/IO/Keyboard.cpp
+#    ${CommonSource}/IO/Mouse.cpp
+    ${IO_Source}
 
-    ${CommonSource}/Graphics/Bindable/Bindable.cpp
-    ${CommonSource}/Graphics/D3D11Graphics.cpp
-    ${CommonSource}/Graphics/DXGIInfoManager.cpp
+#    ${CommonSource}/Graphics/Bindable/Bindable.cpp
+#    ${CommonSource}/Graphics/D3D11Graphics.cpp
+#    ${CommonSource}/Graphics/DXGIInfoManager.cpp
+    ${Graphics_Source}
+    ${Bindable_Source}
+    ${Drawable_Source}
 )
 
 set_target_properties (D3D11 PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")

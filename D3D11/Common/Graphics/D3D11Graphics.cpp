@@ -2,8 +2,6 @@
 #include "Utility/dxerr.h"
 #include "Utility/Marcos/GraphicsThrowMarcos.h"
 #include <sstream>
-#include <d3dcompiler.h>
-#include <DirectXMath.h>
 
 namespace wrl = Microsoft::WRL;
 namespace dx = DirectX;
@@ -98,6 +96,16 @@ D3D11Graphics::D3D11Graphics(HWND hWnd)
 
     // bind depth stensil view to OM
     pContext->OMSetRenderTargets(1u, pRenderTraget.GetAddressOf(), pDSV.Get());
+
+    // configure viewport
+    D3D11_VIEWPORT viewport;
+    viewport.Width = 800.0f;
+    viewport.Height = 600.0f;
+    viewport.MinDepth = 0.0f;
+    viewport.MaxDepth = 1.0f;
+    viewport.TopLeftX = 0.0f;
+    viewport.TopLeftY = 0.0f;
+    pContext->RSSetViewports(1u, &viewport);
 }
 
 void D3D11Graphics::EndFrame()
@@ -126,198 +134,19 @@ void D3D11Graphics::ClearBuffer(float r, float g, float b) noexcept
     pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
-void D3D11Graphics::DrawTestTriangle(float angle, float x, float z)
+void D3D11Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG)
 {
-    HRESULT hr;
+    GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
+}
 
-    struct Vertex
-    {
-        struct
-        {
-            float x;
-            float y;
-            float z;
-        } pos;
-    };
+void D3D11Graphics::SetProjection(DirectX::XMMATRIX proj) noexcept
+{
+    projection = proj;
+}
 
-    // 创建顶点缓冲
-    Vertex vertices[] =
-    {
-        {-1.0f, -1.0f, -1.0f},
-        { 1.0f, -1.0f, -1.0f},
-        {-1.0f,  1.0f, -1.0f},
-        { 1.0f,  1.0f, -1.0f},
-        {-1.0f, -1.0f,  1.0f},
-        { 1.0f, -1.0f,  1.0f},
-        {-1.0f,  1.0f,  1.0f},
-        { 1.0f,  1.0f,  1.0f},
-    };
-    // 创建Buffer
-    wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
-    D3D11_BUFFER_DESC bufferDesc = {};
-    bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    bufferDesc.CPUAccessFlags = 0u;
-    bufferDesc.MiscFlags = 0u;
-    bufferDesc.ByteWidth = sizeof(vertices);
-    bufferDesc.StructureByteStride = sizeof(Vertex);
-    D3D11_SUBRESOURCE_DATA subresourceData = {};
-    subresourceData.pSysMem = vertices;
-    GFX_THROW_INFO(pDevice->CreateBuffer(
-        &bufferDesc,
-        &subresourceData,
-        &pVertexBuffer));
-
-    // 绑定顶点缓冲
-    const UINT stride = sizeof(Vertex);
-    const UINT offset = 0u;
-    pContext->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
-
-    // 创建Index Buffer
-    const unsigned short indices[] = {
-        0, 2, 1,  2, 3, 1,
-        1, 3, 5,  3, 7, 5,
-        2, 6, 3,  3, 6, 7,
-        4, 5, 7,  4, 7, 6,
-        0, 4, 2,  2, 4, 6,
-        0, 1, 4,  1, 5, 4
-    };
-    wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
-    D3D11_BUFFER_DESC indexBufferDesc = {};
-    indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    indexBufferDesc.CPUAccessFlags = 0u;
-    indexBufferDesc.MiscFlags = 0u;
-    indexBufferDesc.ByteWidth = sizeof(indices);
-    indexBufferDesc.StructureByteStride = sizeof(unsigned short);
-    D3D11_SUBRESOURCE_DATA indexSubData = {};
-    indexSubData.pSysMem = indices;
-    GFX_THROW_INFO(pDevice->CreateBuffer(&indexBufferDesc, &indexSubData, &pIndexBuffer));
-    // 绑定IndexBuffer
-    pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
-
-    // 创建Constant buffer
-    struct ConstantBuffer
-    {
-        dx::XMMATRIX transform;
-    };
-    const ConstantBuffer cbuffer = {
-        {
-             dx::XMMatrixTranspose(
-                 dx::XMMatrixRotationZ(angle) *
-                 dx::XMMatrixRotationX(angle) *
-                 dx::XMMatrixTranslation(x, 0.0f, z + 4.0f) *
-                 dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5, 10.0f)
-                 )
-        }
-    };
-    wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
-    D3D11_BUFFER_DESC cBufferDesc;
-    cBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    cBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    cBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    cBufferDesc.MiscFlags = 0u;
-    cBufferDesc.ByteWidth = sizeof(cbuffer);
-    cBufferDesc.StructureByteStride = 0u;
-    D3D11_SUBRESOURCE_DATA  constantSubData = {};
-    constantSubData.pSysMem = &cbuffer;
-    GFX_THROW_INFO(pDevice->CreateBuffer(&cBufferDesc, &constantSubData, &pConstantBuffer));
-
-    // 绑定Constant Buffer
-    pContext->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
-
-    struct ConstantBufferPS
-    {
-        struct
-        {
-            float r;
-            float g;
-            float b;
-            float a;
-        } faceColors[6];
-    };
-
-    const ConstantBufferPS cbufferPS = {
-        {
-            {1.0f,0.0f,1.0f},
-            {1.0f,0.0f,0.0f},
-            {0.0f,1.0f,0.0f},
-            {0.0f,0.0f,1.0f},
-            {1.0f,1.0f,0.0f},
-            {0.0f,1.0f,1.0f},
-        }
-    };
-    wrl::ComPtr<ID3D11Buffer> pConstantBufferPS;
-    D3D11_BUFFER_DESC cBufferDescPS;
-    cBufferDescPS.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    cBufferDescPS.Usage = D3D11_USAGE_DYNAMIC;
-    cBufferDescPS.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    cBufferDescPS.MiscFlags = 0u;
-    cBufferDescPS.ByteWidth = sizeof(cbufferPS);
-    cBufferDescPS.StructureByteStride = 0u;
-    D3D11_SUBRESOURCE_DATA  constantSubDataPS = {};
-    constantSubDataPS.pSysMem = &cbufferPS;
-    GFX_THROW_INFO(pDevice->CreateBuffer(&cBufferDescPS, &constantSubDataPS, &pConstantBufferPS));
-
-    // 绑定Constant Buffer
-    pContext->PSSetConstantBuffers(0u, 1u, pConstantBufferPS.GetAddressOf());
-
-    // 创建PS
-    wrl::ComPtr<ID3D11PixelShader> pPixelShader;
-    wrl::ComPtr<ID3DBlob> pBlob;
-    GFX_THROW_INFO(D3DReadFileToBlob(L"../../Shaders/PixelShader.cso", &pBlob));
-    GFX_THROW_INFO(pDevice->CreatePixelShader(
-        pBlob->GetBufferPointer(),
-        pBlob->GetBufferSize(),
-        nullptr,
-        &pPixelShader));
-    // 绑定PS
-    pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
-
-    // 创建VS
-    wrl::ComPtr<ID3D11VertexShader> pVertexShader;
-
-    GFX_THROW_INFO(D3DReadFileToBlob(L"../../Shaders/VertexShader.cso", &pBlob));
-    GFX_THROW_INFO(pDevice->CreateVertexShader(
-        pBlob->GetBufferPointer(),
-        pBlob->GetBufferSize(),
-        nullptr,
-        &pVertexShader));
-
-    // 绑定VS
-    pContext->VSSetShader(pVertexShader.Get(), nullptr, 0u);
-
-    // input layout
-    wrl::ComPtr<ID3D11InputLayout> pInputLayout;
-    const D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = {
-        {"Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
-    };
-
-    GFX_THROW_INFO(pDevice->CreateInputLayout(
-        inputElementDesc,
-        (UINT)std::size(inputElementDesc),
-        pBlob->GetBufferPointer(),
-        pBlob->GetBufferSize(),
-        &pInputLayout
-        ));
-
-    // bind vertex layout
-    pContext->IASetInputLayout(pInputLayout.Get());
-
-    // Set primitive topology to triangle list (groups of 3 vertices)
-    pContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-
-    // configure viewport
-    D3D11_VIEWPORT viewport;
-    viewport.Width = 800;
-    viewport.Height = 600,
-    viewport.MinDepth = 0;
-    viewport.MaxDepth = 1;
-    viewport.TopLeftX = 0;
-    viewport.TopLeftY = 0;
-    pContext->RSSetViewports(1u, &viewport);
-
-    GFX_THROW_INFO_ONLY(pContext->DrawIndexed((UINT)std::size(indices), 0u, 0u));
+DirectX::XMMATRIX D3D11Graphics::GetProjection() const noexcept
+{
+    return projection;
 }
 
 D3D11Graphics::HRException::HRException(
