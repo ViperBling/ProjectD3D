@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Drawable.h"
 #include "CMakeConfig.h"
@@ -8,6 +8,7 @@ template<class T>
 class DrawableBase : public Drawable
 {
 protected:
+    // 如果要绘制多个相同的图形则进行检查，如果已经被初始化了，就可以复用
     static bool IsStaticInitialized() noexcept
     {
         return !staticBinds.empty();

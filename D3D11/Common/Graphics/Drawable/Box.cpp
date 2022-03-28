@@ -1,4 +1,4 @@
-#include "Box.h"
+﻿#include "Box.h"
 #include "Graphics/Bindable/BindableBase.h"
 #include "Utility/Marcos/GraphicsThrowMarcos.h"
 
@@ -20,6 +20,7 @@ Box::Box(
     theta(adist(rng)),
     phi(adist(rng))
 {
+    // 如果不是第一次实例化，就可以使用静态绑定，但是要注意对其他的静态绑定要进行一次IndexBuffer的指针赋值
     if (!IsStaticInitialized())
     {
         struct Vertex

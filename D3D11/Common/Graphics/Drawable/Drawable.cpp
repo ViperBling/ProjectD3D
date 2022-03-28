@@ -1,4 +1,4 @@
-#include "Drawable.h"
+﻿#include "Drawable.h"
 #include "Utility/Marcos/GraphicsThrowMarcos.h"
 #include "Graphics/Bindable/IndexBuffer.h"
 #include <cassert>
@@ -6,10 +6,13 @@
 
 void Drawable::Draw(D3D11Graphics &gfx) const noexcept(!IS_DEBUG)
 {
+    // 绑定非静态的物体
     for (auto& b : binds)
     {
         b->Bind(gfx);
     }
+    // 绑定静态物体，也就是需要多次创建的相同物体，通过GetStaticBinds虚函数实现
+    // 具体是在DrawableBase中实现，然后根据模板类型返回对应的staticBinds
     for (auto& b : GetStaticBinds())
     {
         b->Bind(gfx);
@@ -19,7 +22,7 @@ void Drawable::Draw(D3D11Graphics &gfx) const noexcept(!IS_DEBUG)
 
 void Drawable::AddBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG)
 {
-    assert("*Must use AddIndexBuffer to bind index buffer" && typeid(*bind) != typeid(IndexBuffer));
+    assert("Must use AddIndexBuffer to bind index buffer" && typeid(*bind) != typeid(IndexBuffer));
     binds.push_back(std::move(bind));
 }
 

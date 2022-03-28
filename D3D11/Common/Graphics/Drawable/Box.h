@@ -1,7 +1,7 @@
 #pragma once
 #include "DrawableBase.h"
 
-
+// 使用中间层来创建Box
 class Box : public DrawableBase<Box>
 {
 public:
