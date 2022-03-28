@@ -19,6 +19,6 @@
 #ifdef NDEBUG
 #define INFOMAN(gfx) HRESULT hr
 #else
-#define INFOMAN(gfx) HRESULT hr; DXGIInfoManager& infoManager = GetInfoManager(gfx)
+#define INFOMAN(gfx) HRESULT hr; DXGIInfoManager& infoManager = GetInfoManager((gfx))
 #endif
 
