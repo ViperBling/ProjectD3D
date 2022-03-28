@@ -15,5 +15,5 @@ protected:
     // 并把这些函数设置为静态的，那么子类就可以在基类不实例化情况下访问gfx的内容，同时也做到了访问限制
     static ID3D11DeviceContext* GetContext(D3D11Graphics& gfx) noexcept;
     static ID3D11Device* GetDevice(D3D11Graphics& gfx) noexcept;
-    static DXGIInfoManager& GetInfoManager(D3D11Graphics& gfx) noexcept(!IS_DEBUG);
+    static DXGIInfoManager& GetInfoManager(D3D11Graphics& gfx) noexcept(IS_DEBUG);
 };
