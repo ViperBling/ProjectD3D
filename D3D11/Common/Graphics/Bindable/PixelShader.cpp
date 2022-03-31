@@ -1,7 +1,7 @@
 #include "PixelShader.h"
 #include "Utility/Marcos/GraphicsThrowMarcos.h"
 
-PixelShder::PixelShder(D3D11Graphics &gfx, const std::wstring &path)
+PixelShader::PixelShader(D3D11Graphics &gfx, const std::wstring &path)
 {
     INFOMAN(gfx);
 
@@ -15,7 +15,7 @@ PixelShder::PixelShder(D3D11Graphics &gfx, const std::wstring &path)
         ));
 }
 
-void PixelShder::Bind(D3D11Graphics &gfx) noexcept
+void PixelShader::Bind(D3D11Graphics &gfx) noexcept
 {
     GetContext(gfx)->PSSetShader(pPixelShader.Get(), nullptr, 0u);
 }

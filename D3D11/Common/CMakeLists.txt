@@ -4,6 +4,7 @@ aux_source_directory(${CommonSource}/Utility Utility_Source)
 aux_source_directory(${CommonSource}/Graphics Graphics_Source)
 aux_source_directory(${CommonSource}/Graphics/Bindable Bindable_Source)
 aux_source_directory(${CommonSource}/Graphics/Drawable Drawable_Source)
+aux_source_directory(${CommonSource}/Graphics/Drawable/Shapes Shapes_Source)
 aux_source_directory(${CommonSource}/IO IO_Source)
 
 add_library(D3D11Lib
@@ -24,6 +25,7 @@ add_library(D3D11Lib
     ${Graphics_Source}
     ${Bindable_Source}
     ${Drawable_Source}
+    ${Shapes_Source}
 )
 
 set_target_properties (D3D11 PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")

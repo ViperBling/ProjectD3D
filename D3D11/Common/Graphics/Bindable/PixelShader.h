@@ -2,10 +2,10 @@
 
 #include "Bindable.h"
 
-class PixelShder : public Bindable
+class PixelShader : public Bindable
 {
 public:
-    PixelShder(D3D11Graphics& gfx, const std::wstring& path);
+    PixelShader(D3D11Graphics& gfx, const std::wstring& path);
     void Bind(D3D11Graphics& gfx) noexcept override;
 
 protected:
