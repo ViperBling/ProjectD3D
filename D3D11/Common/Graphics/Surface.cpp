@@ -11,14 +11,10 @@ namespace Gdiplus
 #include <gdiplus.h>
 #include <sstream>
 
-Surface::Surface(unsigned int width, unsigned int height, unsigned int pitch) noexcept :
-    pBuffer(std::make_unique<Color[]>(pitch * height)),
+Surface::Surface(unsigned int width, unsigned int height) noexcept :
+    pBuffer(std::make_unique<Color[]>(width * height)),
     width(width),
     height(height)
-{}
-
-Surface::Surface(unsigned int width, unsigned int height) noexcept :
-    Surface(width, height, width)
 {}
 
 Surface::Surface(Surface&& source) noexcept :
