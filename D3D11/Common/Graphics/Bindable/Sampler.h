@@ -1,14 +1,13 @@
-//
-// Created by Administrator on 2022/4/11.
-//
+#pragma once
 
-#ifndef D3D11_SAMPLER_H
-#define D3D11_SAMPLER_H
+#include "Bindable.h"
 
+class Sampler : public Bindable
+{
+public:
+    Sampler(D3D11Graphics& gfx);
+    void Bind(D3D11Graphics& gfx) noexcept override;
 
-class Sampler {
-
+protected:
+    Microsoft::WRL::ComPtr<ID3D11SamplerState> pSampler;
 };
-
-
-#endif //D3D11_SAMPLER_H

@@ -6,6 +6,10 @@
 #include <algorithm>
 #include <iterator>
 #include "Math/D3D11Math.h"
+#include "Graphics/Surface.h"
+#include "Graphics/GDIPlusManager.h"
+
+GDIPlusManager gdiPlusManger;
 
 WindowsApplication::WindowsApplication() :
     wnd(800, 600, "ProjectD3D")
@@ -58,6 +62,7 @@ WindowsApplication::WindowsApplication() :
     drawables.reserve( nDrawables );
     std::generate_n( std::back_inserter( drawables ),nDrawables,f );
 
+    const auto s = Surface::FromFile("Images\\kappa50.png");
     wnd.Gfx().SetProjection( DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
 }
 
