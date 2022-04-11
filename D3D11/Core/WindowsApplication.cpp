@@ -4,6 +4,7 @@
 #include "Graphics/Drawable/Shapes/Box.h"
 #include <memory>
 #include <algorithm>
+#include <iterator>
 #include "Math/D3D11Math.h"
 
 WindowsApplication::WindowsApplication() :

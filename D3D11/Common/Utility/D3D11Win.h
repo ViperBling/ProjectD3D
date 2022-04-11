@@ -28,6 +28,7 @@
 // get weird errors when trying to do some windows stuff, try removing some
 // (or all) of these defines (it will increase build time though).
 // 禁掉Windows中的一些宏
+#ifndef FULL_WINTARD
 #define WIN32_LEAN_AND_MEAN
 #define NOGDICAPMASKS
 #define NOSYSMETRICS
@@ -45,7 +46,7 @@
 #define NONLS
 #define NOMEMMGR
 #define NOMETAFILE
-#define NOMINMAX
+
 #define NOOPENFILE
 #define NOSCROLL
 #define NOSERVICE
@@ -62,9 +63,9 @@
 #define NOPROXYSTUB
 #define NOIMAGE
 #define NOTAPE
-
-#ifndef STRICT
-#define STRICT
 #endif
+
+#define NOMINMAX
+#define STRICT
 
 #include <Windows.h>
