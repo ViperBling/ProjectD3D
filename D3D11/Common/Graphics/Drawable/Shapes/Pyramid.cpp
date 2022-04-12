@@ -52,9 +52,7 @@ Pyramid::Pyramid(D3D11Graphics& gfx,
         auto pvs = std::make_unique<VertexShader>( gfx,L"../../Shaders/ColorBlendVS.cso" );
         auto pvsbc = pvs->GetBytecode();
         AddStaticBind( std::move( pvs ) );
-
         AddStaticBind(std::make_unique<PixelShader>( gfx,L"../../Shaders/ColorBlendPS.cso"));
-
         AddStaticIndexBuffer( std::make_unique<IndexBuffer>( gfx,model.indices ) );
 
         const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
@@ -63,7 +61,6 @@ Pyramid::Pyramid(D3D11Graphics& gfx,
                 { "Color",0,DXGI_FORMAT_R8G8B8A8_UNORM,0,12,D3D11_INPUT_PER_VERTEX_DATA,0 },
             };
         AddStaticBind( std::make_unique<InputLayout>( gfx,ied,pvsbc ) );
-
         AddStaticBind( std::make_unique<Topology>( gfx,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST ) );
     }
     else

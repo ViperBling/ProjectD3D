@@ -76,7 +76,6 @@ const Surface::Color *Surface::GetBufferPtrConst() const noexcept {
 Surface Surface::FromFile(const std::string &name) {
     unsigned int width = 0;
     unsigned int height = 0;
-    unsigned int pitch = 0;
     std::unique_ptr<Color[]> pBuffer = nullptr;
 
     {
@@ -91,13 +90,14 @@ Surface Surface::FromFile(const std::string &name) {
             throw Exception(__LINE__, __FILE__, ss.str());
         }
 
+        width = bitmap.GetWidth();
         height = bitmap.GetHeight();
         pBuffer = std::make_unique<Color[]>(width * height);
         for (unsigned int y = 0; y < height; y++) {
             for (unsigned int x = 0; x < width; x++) {
                 Gdiplus::Color c;
                 bitmap.GetPixel(x, y, &c);
-                pBuffer[y * pitch + x] = c.GetValue();
+                pBuffer[y * width + x] = c.GetValue();
             }
         }
     }
