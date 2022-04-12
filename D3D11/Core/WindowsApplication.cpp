@@ -3,6 +3,7 @@
 #include "Graphics/Drawable/Shapes/Pyramid.h"
 #include "Graphics/Drawable/Shapes/Box.h"
 #include "Graphics/Drawable/Shapes/Sheet.h"
+#include "Graphics/Drawable/Shapes/SkinnedBox.h"
 #include <memory>
 #include <algorithm>
 #include <iterator>
@@ -46,6 +47,11 @@ WindowsApplication::WindowsApplication() :
                         gfx, rng, adist, ddist,
                         odist, rdist
                         );
+                case 4:
+                    return std::make_unique<SkinnedBox>(
+                        gfx,rng,adist,ddist,
+                        odist,rdist
+                        );
                 default:
                     assert( false && "bad drawable type in factory" );
                     return {};
@@ -61,14 +67,12 @@ WindowsApplication::WindowsApplication() :
         std::uniform_real_distribution<float> bdist{0.4f, 3.0f};
         std::uniform_int_distribution<int> latdist{5, 20};
         std::uniform_int_distribution<int> longdist{10, 40};
-        std::uniform_int_distribution<int> typedist{0, 3};
+        std::uniform_int_distribution<int> typedist{0, 4};
     };
 
-    Factory f( wnd.Gfx() );
     drawables.reserve( nDrawables );
-    std::generate_n( std::back_inserter( drawables ),nDrawables,f );
+    std::generate_n( std::back_inserter( drawables ),nDrawables,Factory{wnd.Gfx()} );
 
-    const auto s = Surface::FromFile("../../Assets/Textures/kappa50.png");
     wnd.Gfx().SetProjection( DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
 }
 
