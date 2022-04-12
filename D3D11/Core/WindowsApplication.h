@@ -2,6 +2,7 @@
 
 #include "Utility/Window.h"
 #include "Utility/Timer.h"
+#include "Editor/ImguiManager.h"
 
 class WindowsApplication
 {
@@ -15,6 +16,7 @@ private:
     void Tick();
 
 private:
+    ImguiManager imgui;
     Window wnd;
     Timer timer;
     std::vector<std::unique_ptr<class Drawable>> drawables;

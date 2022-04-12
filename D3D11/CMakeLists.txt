@@ -10,6 +10,9 @@ set (CMAKE_CXX_FLAGS -EHsc)
    set(IS_DEBUG true)
 #endif()
 
+include_directories(${PROJECT_SOURCE_DIR}/External)
+include_directories(${PROJECT_SOURCE_DIR}/External/Imgui)
+
 configure_file(CMakeConfig.h.in ${PROJECT_SOURCE_DIR}/Common/CMakeConfig.h)
 
 set (APP_WINRC ${PROJECT_SOURCE_DIR}/Assets/Icon/AppIcon.rc)

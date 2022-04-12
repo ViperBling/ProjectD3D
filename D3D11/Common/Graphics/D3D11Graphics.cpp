@@ -1,6 +1,7 @@
 ﻿#include "D3D11Graphics.h"
 #include "Utility/dxerr.h"
 #include "Utility/Marcos/GraphicsThrowMarcos.h"
+#include "Imgui/backends/imgui_impl_dx11.h"
 #include <sstream>
 
 namespace wrl = Microsoft::WRL;
@@ -106,6 +107,9 @@ D3D11Graphics::D3D11Graphics(HWND hWnd)
     viewport.TopLeftX = 0.0f;
     viewport.TopLeftY = 0.0f;
     pContext->RSSetViewports(1u, &viewport);
+
+    // init imgui d3d impl
+    ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
 
 void D3D11Graphics::EndFrame()

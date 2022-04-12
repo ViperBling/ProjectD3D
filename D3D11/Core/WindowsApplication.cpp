@@ -4,12 +4,16 @@
 #include "Graphics/Drawable/Shapes/Box.h"
 #include "Graphics/Drawable/Shapes/Sheet.h"
 #include "Graphics/Drawable/Shapes/SkinnedBox.h"
-#include <memory>
-#include <algorithm>
-#include <iterator>
 #include "Math/D3D11Math.h"
 #include "Graphics/Surface.h"
 #include "Graphics/GDIPlusManager.h"
+#include "Imgui/imgui.h"
+#include "Imgui/backends/imgui_impl_win32.h"
+#include "Imgui/backends/imgui_impl_dx11.h"
+
+#include <memory>
+#include <algorithm>
+#include <iterator>
 
 GDIPlusManager gdiPlusManger;
 
@@ -100,5 +104,18 @@ void WindowsApplication::Tick()
         b->Update(wnd.kbd.KeyIsPressed( VK_SPACE ) ? 0.0f : DeltaTime);
         b->Draw(wnd.Gfx());
     }
+
+    // imgui
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
+    static bool show_demo_window = true;
+    if (show_demo_window) {
+        ImGui::ShowDemoWindow(&show_demo_window);
+    }
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
     wnd.Gfx().EndFrame();
 }

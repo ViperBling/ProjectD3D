@@ -6,8 +6,18 @@ aux_source_directory(${CommonSource}/Graphics/Bindable Bindable_Source)
 aux_source_directory(${CommonSource}/Graphics/Drawable Drawable_Source)
 aux_source_directory(${CommonSource}/Graphics/Drawable/Shapes Shapes_Source)
 aux_source_directory(${CommonSource}/IO IO_Source)
+aux_source_directory(${CommonSource}/Editor Editor_Source)
+
+file (GLOB EXTERNAL_SRC
+        ${PROJECT_SOURCE_DIR}/External/Imgui/*.h
+        ${PROJECT_SOURCE_DIR}/External/Imgui/*.cpp
+        ${PROJECT_SOURCE_DIR}/External/Imgui/backends/imgui_impl_win32.*
+        ${PROJECT_SOURCE_DIR}/External/Imgui/backends/imgui_impl_dx11.*
+        )
+
 
 add_library(D3D11Lib
+    ${EXTERNAL_SRC}
 #    ${CommonSource}/Utility/D3D11Exception.cpp
 #    ${CommonSource}/Utility/Timer.cpp
 #    ${CommonSource}/Utility/Window.cpp
@@ -18,6 +28,7 @@ add_library(D3D11Lib
 #    ${CommonSource}/IO/Keyboard.cpp
 #    ${CommonSource}/IO/Mouse.cpp
     ${IO_Source}
+    ${Editor_Source}
 
 #    ${CommonSource}/Graphics/Bindable/Bindable.cpp
 #    ${CommonSource}/Graphics/D3D11Graphics.cpp
