@@ -4,6 +4,8 @@
 #include "Utility/Marcos/WindowsThrowMacros.h"
 #include "Imgui/backends/imgui_impl_win32.h"
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 Window::WindowClass Window::WindowClass::wndClass;
 
 const char* Window::WindowClass::GetName() noexcept
