@@ -2,6 +2,7 @@
 #include "Utility/dxerr.h"
 #include "Utility/Marcos/GraphicsThrowMarcos.h"
 #include "Imgui/backends/imgui_impl_dx11.h"
+#include "Imgui/backends/imgui_impl_win32.h"
 #include <sstream>
 
 namespace wrl = Microsoft::WRL;
@@ -112,8 +113,26 @@ D3D11Graphics::D3D11Graphics(HWND hWnd)
     ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
 
+void D3D11Graphics::BeginFrame(float red, float green, float blue) noexcept {
+    // imgui begin frame
+    if (imguiEnabled) {
+        ImGui_ImplDX11_NewFrame();
+        ImGui_ImplWin32_NewFrame();
+        ImGui::NewFrame();
+    }
+    const float color[] = {red, green, blue, 1.0f};
+    pContext->ClearRenderTargetView(pRenderTraget.Get(), color);
+    pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+}
+
 void D3D11Graphics::EndFrame()
 {
+    // imgui frame end
+    if (imguiEnabled) {
+        ImGui::Render();
+        ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    }
+
     HRESULT hr;
 #ifndef NDEBUG
     infoManager.Set();
@@ -122,20 +141,13 @@ void D3D11Graphics::EndFrame()
     {
         if( hr == DXGI_ERROR_DEVICE_REMOVED )
         {
-            throw GFX_DEVICE_REMOVED_EXCEPT( pDevice->GetDeviceRemovedReason() );
+            throw GFX_DEVICE_REMOVED_EXCEPT(pDevice->GetDeviceRemovedReason());
         }
         else
         {
             throw GFX_EXCEPT( hr );
         }
     }
-}
-
-void D3D11Graphics::ClearBuffer(float r, float g, float b) noexcept
-{
-    const float color[] = {r, g, b, 1.0f};
-    pContext->ClearRenderTargetView(pRenderTraget.Get(), color);
-    pContext->ClearDepthStencilView(pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
 void D3D11Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG)
@@ -151,6 +163,18 @@ void D3D11Graphics::SetProjection(DirectX::XMMATRIX proj) noexcept
 DirectX::XMMATRIX D3D11Graphics::GetProjection() const noexcept
 {
     return projection;
+}
+
+void D3D11Graphics::EnableImgui() noexcept {
+    imguiEnabled = true;
+}
+
+void D3D11Graphics::DisableImgui() noexcept {
+    imguiEnabled = false;
+}
+
+bool D3D11Graphics::IsImguiEnabled() const noexcept {
+    return imguiEnabled;
 }
 
 D3D11Graphics::HRException::HRException(

@@ -65,14 +65,20 @@ public:
     D3D11Graphics(const D3D11Graphics&) = delete;
     D3D11Graphics& operator=(const D3D11Graphics&) = delete;
     ~D3D11Graphics() = default;
+
+    void BeginFrame(float red, float green, float blue) noexcept;
     void EndFrame();
-    void ClearBuffer(float r, float g, float b) noexcept;
 
     void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
     void SetProjection(DirectX::XMMATRIX proj) noexcept;
     DirectX::XMMATRIX GetProjection() const noexcept;
 
+    void EnableImgui() noexcept;
+    void DisableImgui() noexcept;
+    bool IsImguiEnabled() const noexcept;
+
 private:
+    bool imguiEnabled = true;
     DirectX::XMMATRIX projection;
 #ifndef NDEBUG
     DXGIInfoManager infoManager;

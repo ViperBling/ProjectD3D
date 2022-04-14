@@ -8,8 +8,8 @@
 #include "Graphics/Surface.h"
 #include "Graphics/GDIPlusManager.h"
 #include "Imgui/imgui.h"
-#include "Imgui/backends/imgui_impl_win32.h"
-#include "Imgui/backends/imgui_impl_dx11.h"
+//#include "Imgui/backends/imgui_impl_win32.h"
+//#include "Imgui/backends/imgui_impl_dx11.h"
 
 #include <memory>
 #include <algorithm>
@@ -97,25 +97,21 @@ WindowsApplication::~WindowsApplication()
 
 void WindowsApplication::Tick()
 {
-    auto DeltaTime = timer.Mark();
-    wnd.Gfx().ClearBuffer(0.07f, 0.0f, 0.12f);
-    for (auto & b : drawables)
+    const auto DeltaTime = timer.Mark();
+    wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
+
+    for (auto & d : drawables)
     {
-        b->Update(wnd.kbd.KeyIsPressed( VK_SPACE ) ? 0.0f : DeltaTime);
-        b->Draw(wnd.Gfx());
+        d->Update(wnd.kbd.KeyIsPressed( VK_SPACE ) ? 0.0f : DeltaTime);
+        d->Draw(wnd.Gfx());
     }
 
-    // imgui
-    ImGui_ImplDX11_NewFrame();
-    ImGui_ImplWin32_NewFrame();
-    ImGui::NewFrame();
-
-    static bool show_demo_window = true;
-    if (show_demo_window) {
-        ImGui::ShowDemoWindow(&show_demo_window);
+    static char buffer[1024];
+    if (ImGui::Begin("Simulation Speed")) {
+        ImGui::SliderFloat("Speed Factor", &speedFactor, 0.0f, 4.0f);
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     }
-    ImGui::Render();
-    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    ImGui::End();
 
     wnd.Gfx().EndFrame();
 }
