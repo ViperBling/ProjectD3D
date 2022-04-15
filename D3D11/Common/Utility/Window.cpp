@@ -128,6 +128,7 @@ LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) return true;
+    const auto imguiIO = ImGui::GetIO();
 
     switch (msg) 
     {
@@ -148,6 +149,8 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         case WM_KEYDOWN:
         case WM_SYSKEYDOWN:
         {
+            // stifle this keyboard message if imgui wants to capture
+            if (imguiIO.WantCaptureKeyboard) break;
             if (!(lParam & 0x40000000) || kbd.AutorepeatIsEnabled())
             {
                 kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
@@ -158,11 +161,13 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         case WM_KEYUP:
         case WM_SYSKEYUP:
         {
+            if (imguiIO.WantCaptureKeyboard) break;
             kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
             break;
         }
         case WM_CHAR:
         {
+            if (imguiIO.WantCaptureKeyboard) break;
             kbd.OnChar(static_cast<char>(wParam));
             break;
         }
@@ -171,6 +176,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         /************* MOUSE MESSAGES ****************/
         case WM_MOUSEMOVE:
         {
+            if (imguiIO.WantCaptureMouse) break;
             const POINTS pt = MAKEPOINTS(lParam);
             // 在窗口内部时，记录鼠标移动，同时改变鼠标的状态
             if (pt.x >= 0 && pt.x < width && pt.y >= 0 && pt.y < height)
@@ -197,6 +203,8 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         }
         case WM_LBUTTONDOWN:
         {
+            SetForegroundWindow(hWnd);
+            if (imguiIO.WantCaptureMouse) break;
             const POINTS pt = MAKEPOINTS(lParam);
             mouse.OnLeftPressed(pt.x, pt.y);
             // bring window to foreground on lclick client region
@@ -205,12 +213,14 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         }
         case WM_RBUTTONDOWN:
         {
+            if (imguiIO.WantCaptureMouse) break;
             const POINTS pt = MAKEPOINTS(lParam);
             mouse.OnRightPressed(pt.x, pt.y);
             break;
         }
         case WM_LBUTTONUP:
         {
+            if (imguiIO.WantCaptureMouse) break;
             const POINTS pt = MAKEPOINTS(lParam );
             mouse.OnLeftReleased(pt.x, pt.y);
             // release mouse if outside of window
@@ -223,6 +233,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         }
         case WM_RBUTTONUP:
         {
+            if (imguiIO.WantCaptureMouse) break;
             const POINTS pt = MAKEPOINTS(lParam );
             mouse.OnRightReleased(pt.x, pt.y);
             // release mouse if outside of window
@@ -235,6 +246,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
         }
         case WM_MOUSEHWHEEL:
         {
+            if (imguiIO.WantCaptureMouse) break;
             const POINTS pt = MAKEPOINTS(lParam);
             const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
             mouse.OnWheelDelta(pt.x, pt.y, delta);

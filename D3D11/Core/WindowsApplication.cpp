@@ -97,7 +97,7 @@ WindowsApplication::~WindowsApplication()
 
 void WindowsApplication::Tick()
 {
-    const auto DeltaTime = timer.Mark();
+    const auto DeltaTime = timer.Mark() * speedFactor;
     wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
 
     for (auto & d : drawables)
@@ -106,10 +106,10 @@ void WindowsApplication::Tick()
         d->Draw(wnd.Gfx());
     }
 
-    static char buffer[1024];
     if (ImGui::Begin("Simulation Speed")) {
         ImGui::SliderFloat("Speed Factor", &speedFactor, 0.0f, 4.0f);
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text("Status: %s", wnd.kbd.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING");
     }
     ImGui::End();
 
