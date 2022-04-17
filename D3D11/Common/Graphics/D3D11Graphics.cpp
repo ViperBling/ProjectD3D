@@ -177,6 +177,14 @@ bool D3D11Graphics::IsImguiEnabled() const noexcept {
     return imguiEnabled;
 }
 
+void D3D11Graphics::SetCamera(DirectX::XMMATRIX cam) noexcept {
+    camera = cam;
+}
+
+DirectX::XMMATRIX D3D11Graphics::GetCamera() const noexcept {
+    return camera;
+}
+
 D3D11Graphics::HRException::HRException(
     int line, const char *file,
     HRESULT hr,

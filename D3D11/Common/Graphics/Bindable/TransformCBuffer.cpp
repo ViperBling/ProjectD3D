@@ -13,7 +13,10 @@ void TransformCBuffer::Bind(D3D11Graphics &gfx) noexcept
 {
     pVCBuffer->Update(
         gfx,
-        DirectX::XMMatrixTranspose(parent.GetTransformXM() * gfx.GetProjection())
+        DirectX::XMMatrixTranspose(
+            parent.GetTransformXM() *
+            gfx.GetCamera() *
+            gfx.GetProjection())
         );
     pVCBuffer->Bind(gfx);
 }

@@ -73,12 +73,16 @@ public:
     void SetProjection(DirectX::XMMATRIX proj) noexcept;
     DirectX::XMMATRIX GetProjection() const noexcept;
 
+    void SetCamera(DirectX::XMMATRIX cam)  noexcept;
+    DirectX::XMMATRIX GetCamera() const noexcept;
+
     void EnableImgui() noexcept;
     void DisableImgui() noexcept;
     bool IsImguiEnabled() const noexcept;
 
 private:
     bool imguiEnabled = true;
+    DirectX::XMMATRIX camera;
     DirectX::XMMATRIX projection;
 #ifndef NDEBUG
     DXGIInfoManager infoManager;
