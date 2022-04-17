@@ -2,6 +2,7 @@
 
 #include "Utility/Window.h"
 #include "Utility/Timer.h"
+#include "Utility/Camera.h"
 #include "Editor/ImguiManager.h"
 
 class WindowsApplication
@@ -21,5 +22,6 @@ private:
     Timer timer;
     std::vector<std::unique_ptr<class Drawable>> drawables;
     float speedFactor = 1.0;
+    Camera camera;
     static constexpr size_t nDrawables = 180;
 };

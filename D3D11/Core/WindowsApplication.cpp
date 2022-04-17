@@ -80,7 +80,6 @@ WindowsApplication::WindowsApplication() :
     std::generate_n( std::back_inserter( drawables ),nDrawables,Factory{wnd.Gfx()} );
 
     wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
-    wnd.Gfx().SetCamera(dx::XMMatrixTranslation(0.0f, 0.0f, 20.0f));
 }
 
 int WindowsApplication::Run()
@@ -102,6 +101,7 @@ void WindowsApplication::Tick()
 {
     const auto DeltaTime = timer.Mark() * speedFactor;
     wnd.Gfx().BeginFrame(0.07f, 0.0f, 0.12f);
+    wnd.Gfx().SetCamera(camera.GetMatrix());
 
     for (auto & d : drawables)
     {
@@ -112,9 +112,11 @@ void WindowsApplication::Tick()
     if (ImGui::Begin("Simulation Speed")) {
         ImGui::SliderFloat("Speed Factor", &speedFactor, 0.0f, 4.0f);
         ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::Text("Status: %s", wnd.kbd.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING");
+        ImGui::Text("Status: %s", wnd.kbd.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNINGRUNNING (hold spacebar to pause)");
     }
     ImGui::End();
+
+    camera.SpawnControlWindow();
 
     wnd.Gfx().EndFrame();
 }

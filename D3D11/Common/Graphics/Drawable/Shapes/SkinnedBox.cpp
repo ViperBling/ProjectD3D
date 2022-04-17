@@ -4,6 +4,7 @@
 #include "Graphics/Drawable/Shapes/Cube.h"
 #include "Graphics/Surface.h"
 #include "Graphics/Bindable/Texture.h"
+#include "Graphics/Bindable/Sampler.h"
 
 SkinnedBox::SkinnedBox(
     D3D11Graphics &gfx,
@@ -56,6 +57,7 @@ SkinnedBox::SkinnedBox(
     } else {
         SetIndexFromStatic();
     }
+    AddBind(std::make_unique<Sampler>(gfx));
     AddBind(std::make_unique<TransformCBuffer>(gfx, *this));
 }
 
