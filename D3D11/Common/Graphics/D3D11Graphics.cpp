@@ -185,6 +185,10 @@ DirectX::XMMATRIX D3D11Graphics::GetCamera() const noexcept {
     return camera;
 }
 
+D3D11Graphics::~D3D11Graphics() {
+    ImGui_ImplDX11_Shutdown();
+}
+
 D3D11Graphics::HRException::HRException(
     int line, const char *file,
     HRESULT hr,

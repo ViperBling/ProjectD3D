@@ -64,7 +64,7 @@ public:
     explicit D3D11Graphics(HWND hWnd);
     D3D11Graphics(const D3D11Graphics&) = delete;
     D3D11Graphics& operator=(const D3D11Graphics&) = delete;
-    ~D3D11Graphics() = default;
+    ~D3D11Graphics();
 
     void BeginFrame(float red, float green, float blue) noexcept;
     void EndFrame();

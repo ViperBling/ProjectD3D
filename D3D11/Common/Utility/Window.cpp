@@ -128,7 +128,7 @@ LRESULT Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
     if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam)) return true;
-    const auto imguiIO = ImGui::GetIO();
+    const auto& imguiIO = ImGui::GetIO();
 
     switch (msg) 
     {
