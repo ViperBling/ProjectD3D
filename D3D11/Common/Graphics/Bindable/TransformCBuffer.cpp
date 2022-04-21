@@ -5,20 +5,24 @@ TransformCBuffer::TransformCBuffer(D3D11Graphics &gfx, const Drawable &parent) :
 {
     if (!pVCBuffer)
     {
-        pVCBuffer = std::make_unique<VertexConstantBuffer<DirectX::XMMATRIX>>(gfx);
+        pVCBuffer = std::make_unique<VertexConstantBuffer<Transforms>>(gfx);
     }
 }
 
 void TransformCBuffer::Bind(D3D11Graphics &gfx) noexcept
 {
-    pVCBuffer->Update(
-        gfx,
+    auto model = parent.GetTransformXM();
+    const Transforms transforms = {
+        DirectX::XMMatrixTranspose(model),
         DirectX::XMMatrixTranspose(
-            parent.GetTransformXM() *
+            model *
             gfx.GetCamera() *
-            gfx.GetProjection())
-        );
+            gfx.GetProjection()
+            )
+    };
+
+    pVCBuffer->Update(gfx, transforms);
     pVCBuffer->Bind(gfx);
 }
 
-std::unique_ptr<VertexConstantBuffer<DirectX::XMMATRIX>> TransformCBuffer::pVCBuffer;
+std::unique_ptr<VertexConstantBuffer<TransformCBuffer::Transforms>> TransformCBuffer::pVCBuffer;

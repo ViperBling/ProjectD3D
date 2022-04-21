@@ -31,17 +31,20 @@ target_link_libraries(D3D11 D3D11Lib)
 add_custom_target(Shaders)
 
 set(HLSL_SHADER_FILES
-    Shaders/ColorIndexVS.hlsl Shaders/ColorIndexPS.hlsl
     Shaders/ColorBlendVS.hlsl Shaders/ColorBlendPS.hlsl
-    Shaders/TextureVS.hlsl Shaders/TexturePS.hlsl)
+    Shaders/TextureVS.hlsl Shaders/TexturePS.hlsl
+    Shaders/SolidVS.hlsl Shaders/SolidPS.hlsl
+    Shaders/PhongVS.hlsl Shaders/PhongPS.hlsl)
 
-set_source_files_properties(Shaders/ColorIndexVS.hlsl PROPERTIES ShaderType "vs")
 set_source_files_properties(Shaders/ColorBlendVS.hlsl PROPERTIES ShaderType "vs")
 set_source_files_properties(Shaders/TextureVS.hlsl PROPERTIES ShaderType "vs")
+set_source_files_properties(Shaders/SolidVS.hlsl PROPERTIES ShaderType "vs")
+set_source_files_properties(Shaders/PhongVS.hlsl PROPERTIES ShaderType "vs")
 
-set_source_files_properties(Shaders/ColorIndexPS.hlsl PROPERTIES ShaderType "ps")
 set_source_files_properties(Shaders/ColorBlendPS.hlsl PROPERTIES ShaderType "ps")
 set_source_files_properties(Shaders/TexturePS.hlsl PROPERTIES ShaderType "ps")
+set_source_files_properties(Shaders/SolidPS.hlsl PROPERTIES ShaderType "ps")
+set_source_files_properties(Shaders/PhongPS.hlsl PROPERTIES ShaderType "ps")
 
 set_source_files_properties(${HLSL_SHADER_FILES} PROPERTIES ShaderModel "5_0")
 
