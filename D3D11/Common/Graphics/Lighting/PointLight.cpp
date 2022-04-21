@@ -30,4 +30,5 @@ void PointLight::Draw(D3D11Graphics &gfx) const noexcept(!IS_DEBUG) {
 
 void PointLight::Bind(D3D11Graphics &gfx) const noexcept {
     cBuffer.Update(gfx, PointLightCBuffer{pos});
+    cBuffer.Bind(gfx);
 }

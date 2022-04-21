@@ -39,11 +39,8 @@ public:
             const auto p0 = XMLoadFloat3(&v0.pos);
             const auto p1 = XMLoadFloat3(&v1.pos);
             const auto p2 = XMLoadFloat3(&v2.pos);
-            auto nx = p1 - p0;
-            auto ny = p2 - p0;
 
-//            const auto n = XMVector3Normalize(XMVector3Cross((p1 - p0), (p2 - p0) ) );
-            const auto n = XMVector3Normalize(XMVector3Cross(nx, ny));
+            const auto n = XMVector3Normalize(XMVector3Cross((p1 - p0), (p2 - p0) ) );
 
             XMStoreFloat3(&v0.n, n);
             XMStoreFloat3(&v1.n, n);
