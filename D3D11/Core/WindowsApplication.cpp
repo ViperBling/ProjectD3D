@@ -16,7 +16,7 @@ namespace dx = DirectX;
 GDIPlusManager gdiPlusManger;
 
 WindowsApplication::WindowsApplication() :
-    wnd(800, 600, "ProjectD3D"),
+    wnd(1280, 720, "ProjectD3D"),
     light(wnd.Gfx())
 {
     class Factory
@@ -48,7 +48,7 @@ WindowsApplication::WindowsApplication() :
     drawables.reserve( nDrawables );
     std::generate_n( std::back_inserter( drawables ),nDrawables,Factory{wnd.Gfx()} );
 
-    wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
+    wnd.Gfx().SetProjection( dx::XMMatrixPerspectiveLH(1.0f, 720.0f / 1280.0f, 0.5f, 40.0f));
 }
 
 int WindowsApplication::Run()

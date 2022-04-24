@@ -60,7 +60,7 @@ D3D11Graphics::D3D11Graphics(HWND hWnd)
         &pBackBuffer) );
     GFX_THROW_INFO( pDevice->CreateRenderTargetView(
         pBackBuffer.Get(),
-        nullptr, &pRenderTraget ) );
+        nullptr, &pRenderTraget));
 
     // 创建depth stencil state
     D3D11_DEPTH_STENCIL_DESC depthStencilDesc {};
@@ -76,8 +76,8 @@ D3D11Graphics::D3D11Graphics(HWND hWnd)
     // create depth stencil texture
     wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
     D3D11_TEXTURE2D_DESC descDepth = {};
-    descDepth.Width = 800u;
-    descDepth.Height = 600u;
+    descDepth.Width = 1280u;
+    descDepth.Height = 720u;
     descDepth.MipLevels = 1u;
     descDepth.ArraySize = 1u;
     descDepth.Format = DXGI_FORMAT_D32_FLOAT;
@@ -101,8 +101,8 @@ D3D11Graphics::D3D11Graphics(HWND hWnd)
 
     // configure viewport
     D3D11_VIEWPORT viewport;
-    viewport.Width = 800.0f;
-    viewport.Height = 600.0f;
+    viewport.Width = 1280.0f;
+    viewport.Height = 720.0f;
     viewport.MinDepth = 0.0f;
     viewport.MaxDepth = 1.0f;
     viewport.TopLeftX = 0.0f;
