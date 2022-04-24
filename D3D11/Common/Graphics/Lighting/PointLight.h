@@ -11,7 +11,7 @@ public:
     void SpawnControlWindow() noexcept;
     void Reset() noexcept;
     void Draw(D3D11Graphics& gfx) const noexcept(!IS_DEBUG);
-    void Bind(D3D11Graphics& gfx) const noexcept;
+    void Bind(D3D11Graphics& gfx, DirectX::XMMATRIX view) const noexcept;
 
 private:
     struct PointLightCBuffer {
