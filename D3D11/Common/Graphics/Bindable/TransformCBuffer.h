@@ -12,7 +12,7 @@ private:
     };
 
 public:
-    TransformCBuffer(D3D11Graphics& gfx, const Drawable& parent);
+    TransformCBuffer(D3D11Graphics& gfx, const Drawable& parent, UINT slot = 0);
     void Bind(D3D11Graphics& gfx) noexcept override;
 
 private:

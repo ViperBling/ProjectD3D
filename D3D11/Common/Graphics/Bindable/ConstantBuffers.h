@@ -24,7 +24,8 @@ public:
     }
 
     // 根据指定内容创建ConstantBuffer
-    ConstantBuffer(D3D11Graphics& gfx, const T& consts)
+    ConstantBuffer(D3D11Graphics& gfx, const T& consts, UINT slot = 0) :
+        slot(slot)
     {
         INFOMAN(gfx);
 
@@ -42,7 +43,8 @@ public:
     }
 
     // 默认的创建类型
-    explicit ConstantBuffer(D3D11Graphics& gfx)
+    ConstantBuffer(D3D11Graphics& gfx, UINT slot = 0) :
+        slot(slot)
     {
         INFOMAN(gfx);
 
@@ -59,6 +61,7 @@ public:
 
 protected:
     Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
+    UINT slot;
 };
 
 template<typename T>
@@ -66,13 +69,14 @@ class VertexConstantBuffer : public ConstantBuffer<T>
 {
     // 可以使用this指针的方式调用GetContext，也可以在这里using声明来调用
     using ConstantBuffer<T>::pConstantBuffer;
+    using ConstantBuffer<T>::slot;
     using Bindable::GetContext;
 
 public:
     using ConstantBuffer<T>::ConstantBuffer;
     void Bind(D3D11Graphics& gfx) noexcept override
     {
-        GetContext(gfx)->VSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+        GetContext(gfx)->VSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
     }
 };
 
@@ -81,12 +85,13 @@ class PixelConstantBuffer : public ConstantBuffer<T>
 {
     // 可以使用this指针的方式调用GetContext，也可以在这里using声明来调用
     using ConstantBuffer<T>::pConstantBuffer;
+    using ConstantBuffer<T>::slot;
     using Bindable::GetContext;
 
 public:
     using ConstantBuffer<T>::ConstantBuffer;
     void Bind(D3D11Graphics& gfx) noexcept override
     {
-        GetContext(gfx)->PSSetConstantBuffers(0u, 1u, pConstantBuffer.GetAddressOf());
+        GetContext(gfx)->PSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
     }
 };

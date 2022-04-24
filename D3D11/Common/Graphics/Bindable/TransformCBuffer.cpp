@@ -1,11 +1,11 @@
 #include "TransformCBuffer.h"
 
-TransformCBuffer::TransformCBuffer(D3D11Graphics &gfx, const Drawable &parent) :
+TransformCBuffer::TransformCBuffer(D3D11Graphics &gfx, const Drawable &parent, UINT slot) :
     parent(parent)
 {
     if (!pVCBuffer)
     {
-        pVCBuffer = std::make_unique<VertexConstantBuffer<Transforms>>(gfx);
+        pVCBuffer = std::make_unique<VertexConstantBuffer<Transforms>>(gfx, slot);
     }
 }
 
