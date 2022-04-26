@@ -12,16 +12,7 @@ Box::Box(
     std::uniform_real_distribution<float>& bdist,
     DirectX::XMFLOAT3 material)
     :
-    r(rdist(rng)),
-    droll(ddist(rng)),
-    dpitch(ddist(rng)),
-    dyaw(ddist(rng)),
-    dphi(odist(rng)),
-    dtheta(odist(rng)),
-    dchi(odist(rng)),
-    chi(adist(rng)),
-    theta(adist(rng)),
-    phi(adist(rng))
+    TestObject(gfx, rng, adist, ddist, odist, rdist)
 {
     namespace dx = DirectX;
     // 如果不是第一次实例化，就可以使用静态绑定，但是要注意对其他的静态绑定要进行一次IndexBuffer的指针赋值
@@ -78,21 +69,9 @@ Box::Box(
     );
 }
 
-void Box::Update( float DeltaTime ) noexcept
-{
-    roll += droll * DeltaTime;
-    pitch += dpitch * DeltaTime;
-    yaw += dyaw * DeltaTime;
-    theta += dtheta * DeltaTime;
-    phi += dphi * DeltaTime;
-    chi += dchi * DeltaTime;
-}
-
 DirectX::XMMATRIX Box::GetTransformXM() const noexcept
 {
     namespace dx = DirectX;
-    return dx::XMLoadFloat3x3(&mt) *
-           dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-           dx::XMMatrixTranslation(r, 0.0f, 0.0f) *
-           dx::XMMatrixRotationRollPitchYaw(theta, phi, chi);
+    return dx::XMLoadFloat3x3(&mt) * TestObject::GetTransformXM();
+
 }
