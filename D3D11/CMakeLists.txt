@@ -35,18 +35,23 @@ set(HLSL_SHADER_FILES
     Shaders/TextureVS.hlsl Shaders/TexturePS.hlsl
     Shaders/SolidVS.hlsl Shaders/SolidPS.hlsl
     Shaders/PhongVS.hlsl Shaders/PhongPS.hlsl
-                         Shaders/IndexedPhongPS.hlsl)
+                         Shaders/IndexedPhongPS.hlsl
+    Shaders/BlendedPhongVS.hlsl Shaders/BlendedPhongPS.hlsl)
 
 set_source_files_properties(Shaders/ColorBlendVS.hlsl PROPERTIES ShaderType "vs")
 set_source_files_properties(Shaders/TextureVS.hlsl PROPERTIES ShaderType "vs")
 set_source_files_properties(Shaders/SolidVS.hlsl PROPERTIES ShaderType "vs")
 set_source_files_properties(Shaders/PhongVS.hlsl PROPERTIES ShaderType "vs")
+set_source_files_properties(Shaders/BlendedPhongVS.hlsl PROPERTIES ShaderType "vs")
+#set_source_files_properties(Shaders/*VS.hlsl PROPERTIES ShaderType "vs")
 
 set_source_files_properties(Shaders/ColorBlendPS.hlsl PROPERTIES ShaderType "ps")
 set_source_files_properties(Shaders/TexturePS.hlsl PROPERTIES ShaderType "ps")
 set_source_files_properties(Shaders/SolidPS.hlsl PROPERTIES ShaderType "ps")
 set_source_files_properties(Shaders/PhongPS.hlsl PROPERTIES ShaderType "ps")
 set_source_files_properties(Shaders/IndexedPhongPS.hlsl PROPERTIES ShaderType "ps")
+set_source_files_properties(Shaders/BlendedPhongPS.hlsl PROPERTIES ShaderType "ps")
+#set_source_files_properties(Shaders/*PS.hlsl PROPERTIES ShaderType "ps")
 
 set_source_files_properties(${HLSL_SHADER_FILES} PROPERTIES ShaderModel "5_0")
 
