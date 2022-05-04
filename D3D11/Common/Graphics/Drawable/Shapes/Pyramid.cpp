@@ -26,12 +26,16 @@ Pyramid::Pyramid(
             std::array<char, 4> color;
             char padding;
         };
-        auto model = Cone::MakeTesselatedIndependentFaces<Vertex>(tdist(rng));
+        const auto tesselation = tdist(rng);
+        auto model = Cone::MakeTesselatedIndependentFaces<Vertex>(tesselation);
 
         for (auto v : model.vertices) {
-            v.color = {(char)40, (char)40, (char)255};
+            v.color = {(char)10, (char)10, (char)255};
         }
-        model.vertices.front().color = {(char)255, (char)20, (char)20};
+        for (int i = 0; i < tesselation; i++) {
+            model.vertices[i * 3].color = {(char)255, (char)10, (char)10};
+        }
+
         // deform mesh linearly
         model.Transform( dx::XMMatrixScaling( 1.0f,1.0f,0.7f ) );
         model.SetNormalsIndependentFlat();
@@ -52,6 +56,14 @@ Pyramid::Pyramid(
             };
         AddStaticBind( std::make_unique<InputLayout>( gfx,ied,pvsbc ) );
         AddStaticBind( std::make_unique<Topology>( gfx,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST ) );
+
+        struct PSMaterialConstant
+        {
+            float specularIntensity = 0.6f;
+            float specularPower = 30.0f;
+            float padding[2];
+        } colorConst;
+        AddStaticBind( std::make_unique<PixelConstantBuffer<PSMaterialConstant>>( gfx,colorConst,1u ) );
     }
     else
     {
