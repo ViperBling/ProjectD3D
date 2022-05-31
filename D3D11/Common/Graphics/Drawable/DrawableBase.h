@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Drawable.h"
-#include "CMakeConfig.h"
 #include "Graphics/Bindable/IndexBuffer.h"
 
 template<class T>

@@ -16,7 +16,6 @@ file (GLOB EXTERNAL_SRC
         ${PROJECT_SOURCE_DIR}/External/Imgui/backends/imgui_impl_dx11.*
         )
 
-
 add_library(D3D11Lib
     ${EXTERNAL_SRC}
 #    ${CommonSource}/Utility/D3D11Exception.cpp
@@ -47,3 +46,8 @@ set_target_properties (D3D11 PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:window
 set_target_properties (D3D11 PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:windows")
 
 target_link_libraries(D3D11Lib user32 d3d11 d3dcompiler dxgi dxguid gdiplus)
+
+add_custom_command(TARGET D3D11Lib POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/Assets
+        ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/Assets)

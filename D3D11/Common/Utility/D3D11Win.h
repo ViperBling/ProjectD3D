@@ -69,3 +69,5 @@
 #define STRICT
 
 #include <Windows.h>
+
+#include "ProjectSetting/BuildType.h"

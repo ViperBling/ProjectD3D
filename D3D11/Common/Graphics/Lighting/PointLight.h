@@ -1,5 +1,5 @@
 #pragma once
-#include "CMakeConfig.h"
+
 #include "Graphics/D3D11Graphics.h"
 #include "Graphics/Drawable/Shapes/SolidSphere.h"
 #include "Graphics/Bindable/ConstantBuffers.h"

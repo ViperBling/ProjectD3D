@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "CMakeConfig.h"
 #include "Graphics/D3D11Graphics.h"
 
 // Bindable基类，包括所有可绑定到管线上的对象

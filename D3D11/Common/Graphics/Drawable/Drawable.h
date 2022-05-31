@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "CMakeConfig.h"
 #include "Graphics/D3D11Graphics.h"
 #include <DirectXMath.h>
 

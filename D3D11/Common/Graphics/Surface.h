@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CMakeConfig.h"
 #include "Utility/D3D11Win.h"
 #include "Utility/D3D11Exception.h"
 #include <string>

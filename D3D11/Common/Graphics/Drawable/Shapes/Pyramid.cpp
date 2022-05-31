@@ -38,14 +38,14 @@ Pyramid::Pyramid(
 
         // deform mesh linearly
         model.Transform( dx::XMMatrixScaling( 1.0f,1.0f,0.7f ) );
-        model.SetNormalsIndependentFlat();
+//        model.SetNormalsIndependentFlat();
 
         AddStaticBind( std::make_unique<VertexBuffer>( gfx,model.vertices ) );
 
-        auto pvs = std::make_unique<VertexShader>( gfx,L"../../Shaders/BlendedPhongVS.cso" );
+        auto pvs = std::make_unique<VertexShader>( gfx,L"./Assets/Shaders/BlendedPhongVS.cso" );
         auto pvsbc = pvs->GetBytecode();
         AddStaticBind( std::move( pvs ) );
-        AddStaticBind(std::make_unique<PixelShader>( gfx,L"../../Shaders/BlendedPhongPS.cso"));
+        AddStaticBind(std::make_unique<PixelShader>( gfx,L"./Assets/Shaders/BlendedPhongPS.cso"));
         AddStaticIndexBuffer( std::make_unique<IndexBuffer>( gfx,model.indices ) );
 
         const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =

@@ -6,14 +6,20 @@ set (CMAKE_CXX_STANDARD 17)
 
 set (CMAKE_CXX_FLAGS -EHsc)
 
-#if(CMAKE_BUID_TYPE STREQUAL Debug)
-   set(IS_DEBUG true)
-#endif()
+if (CMAKE_BUILD_TYPE MATCHES "Debug" OR CMAKE_BUILD_TYPE MATCHES "None")
+    set(BuildType Debug)
+    add_compile_definitions(PEDEBUG)
+
+elseif (CMAKE_BUILD_TYPE MATCHES "Release")
+    set(BuildType Release)
+    add_compile_definitions(PERELEASE)
+
+else ()
+endif ()
 
 include_directories(${PROJECT_SOURCE_DIR}/External)
 include_directories(${PROJECT_SOURCE_DIR}/External/Imgui)
 
-configure_file(CMakeConfig.h.in ${PROJECT_SOURCE_DIR}/Common/CMakeConfig.h)
 
 set (APP_WINRC ${PROJECT_SOURCE_DIR}/Assets/Icon/AppIcon.rc)
 set_property(SOURCE ${APP_WINRC} APPEND PROPERTY
@@ -31,27 +37,25 @@ target_link_libraries(D3D11 D3D11Lib)
 add_custom_target(Shaders)
 
 set(HLSL_SHADER_FILES
-    Shaders/ColorBlendVS.hlsl Shaders/ColorBlendPS.hlsl
-    Shaders/TextureVS.hlsl Shaders/TexturePS.hlsl
-    Shaders/SolidVS.hlsl Shaders/SolidPS.hlsl
-    Shaders/PhongVS.hlsl Shaders/PhongPS.hlsl
-                         Shaders/IndexedPhongPS.hlsl
-    Shaders/BlendedPhongVS.hlsl Shaders/BlendedPhongPS.hlsl)
+        Assets/Shaders/ColorBlendVS.hlsl Assets/Shaders/ColorBlendPS.hlsl
+        Assets/Shaders/TextureVS.hlsl Assets/Shaders/TexturePS.hlsl
+        Assets/Shaders/SolidVS.hlsl Assets/Shaders/SolidPS.hlsl
+        Assets/Shaders/PhongVS.hlsl Assets/Shaders/PhongPS.hlsl
+        Assets/Shaders/IndexedPhongPS.hlsl
+        Assets/Shaders/BlendedPhongVS.hlsl Assets/Shaders/BlendedPhongPS.hlsl)
 
-set_source_files_properties(Shaders/ColorBlendVS.hlsl PROPERTIES ShaderType "vs")
-set_source_files_properties(Shaders/TextureVS.hlsl PROPERTIES ShaderType "vs")
-set_source_files_properties(Shaders/SolidVS.hlsl PROPERTIES ShaderType "vs")
-set_source_files_properties(Shaders/PhongVS.hlsl PROPERTIES ShaderType "vs")
-set_source_files_properties(Shaders/BlendedPhongVS.hlsl PROPERTIES ShaderType "vs")
-#set_source_files_properties(Shaders/*VS.hlsl PROPERTIES ShaderType "vs")
+set_source_files_properties(Assets/Shaders/ColorBlendVS.hlsl PROPERTIES ShaderType "vs")
+set_source_files_properties(Assets/Shaders/TextureVS.hlsl PROPERTIES ShaderType "vs")
+set_source_files_properties(Assets/Shaders/SolidVS.hlsl PROPERTIES ShaderType "vs")
+set_source_files_properties(Assets/Shaders/PhongVS.hlsl PROPERTIES ShaderType "vs")
+set_source_files_properties(Assets/Shaders/BlendedPhongVS.hlsl PROPERTIES ShaderType "vs")
 
-set_source_files_properties(Shaders/ColorBlendPS.hlsl PROPERTIES ShaderType "ps")
-set_source_files_properties(Shaders/TexturePS.hlsl PROPERTIES ShaderType "ps")
-set_source_files_properties(Shaders/SolidPS.hlsl PROPERTIES ShaderType "ps")
-set_source_files_properties(Shaders/PhongPS.hlsl PROPERTIES ShaderType "ps")
-set_source_files_properties(Shaders/IndexedPhongPS.hlsl PROPERTIES ShaderType "ps")
-set_source_files_properties(Shaders/BlendedPhongPS.hlsl PROPERTIES ShaderType "ps")
-#set_source_files_properties(Shaders/*PS.hlsl PROPERTIES ShaderType "ps")
+set_source_files_properties(Assets/Shaders/ColorBlendPS.hlsl PROPERTIES ShaderType "ps")
+set_source_files_properties(Assets/Shaders/TexturePS.hlsl PROPERTIES ShaderType "ps")
+set_source_files_properties(Assets/Shaders/SolidPS.hlsl PROPERTIES ShaderType "ps")
+set_source_files_properties(Assets/Shaders/PhongPS.hlsl PROPERTIES ShaderType "ps")
+set_source_files_properties(Assets/Shaders/IndexedPhongPS.hlsl PROPERTIES ShaderType "ps")
+set_source_files_properties(Assets/Shaders/BlendedPhongPS.hlsl PROPERTIES ShaderType "ps")
 
 set_source_files_properties(${HLSL_SHADER_FILES} PROPERTIES ShaderModel "5_0")
 
@@ -60,7 +64,7 @@ foreach(FILE ${HLSL_SHADER_FILES})
  get_source_file_property(shadertype ${FILE} ShaderType)
  get_source_file_property(shadermodel ${FILE} ShaderModel)
  add_custom_command(TARGET Shaders
-     COMMAND fxc.exe /nologo /Emain /T${shadertype}_${shadermodel} $<$<CONFIG:DEBUG>:/Od> /Zi /Fo ${PROJECT_SOURCE_DIR}/Shaders/${FILE_WE}.cso /Fd ${PROJECT_SOURCE_DIR}/Shaders/${FILE_WE}.pdb ${FILE}
+     COMMAND fxc.exe /nologo /Emain /T${shadertype}_${shadermodel} $<$<CONFIG:DEBUG>:/Od> /Zi /Fo Assets/Shaders/${FILE_WE}.cso /Fd Assets/Shaders/${FILE_WE}.pdb ${FILE}
      MAIN_DEPENDENCY ${FILE}
      COMMENT "HLSL ${FILE}"
      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

@@ -2,6 +2,7 @@
 #include "Graphics/Drawable/Shapes/Box.h"
 #include "Graphics/Drawable/Shapes/Cylinder.h"
 #include "Graphics/Drawable/Shapes/Pyramid.h"
+#include "Graphics/Drawable/Shapes/SkinnedBox.h"
 #include "Math/D3D11Math.h"
 #include "Graphics/Surface.h"
 #include "Graphics/GDIPlusManager.h"
@@ -47,6 +48,11 @@ WindowsApplication::WindowsApplication() :
                     gfx, rng, adist, ddist, odist,
                     rdist, tdist
                     );
+            case 3:
+                return std::make_unique<SkinnedBox>(
+                    gfx,rng,adist,ddist,
+                    odist,rdist
+                );
             default:
                 assert(false && "impossible drawable option in factory");
                 return {};
