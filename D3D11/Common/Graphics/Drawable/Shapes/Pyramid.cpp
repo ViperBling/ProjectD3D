@@ -19,34 +19,10 @@ Pyramid::Pyramid(
 
     if( !IsStaticInitialized() )
     {
-        struct Vertex
-        {
-            dx::XMFLOAT3 pos;
-            dx::XMFLOAT3 n;
-            std::array<char, 4> color;
-            char padding;
-        };
-        const auto tesselation = tdist(rng);
-        auto model = Cone::MakeTesselatedIndependentFaces<Vertex>(tesselation);
-
-        for (auto v : model.vertices) {
-            v.color = {(char)10, (char)10, (char)255};
-        }
-        for (int i = 0; i < tesselation; i++) {
-            model.vertices[i * 3].color = {(char)255, (char)10, (char)10};
-        }
-
-        // deform mesh linearly
-        model.Transform( dx::XMMatrixScaling( 1.0f,1.0f,0.7f ) );
-//        model.SetNormalsIndependentFlat();
-
-        AddStaticBind( std::make_unique<VertexBuffer>( gfx,model.vertices ) );
-
         auto pvs = std::make_unique<VertexShader>( gfx,L"./Assets/Shaders/BlendedPhongVS.cso" );
         auto pvsbc = pvs->GetBytecode();
         AddStaticBind( std::move( pvs ) );
         AddStaticBind(std::make_unique<PixelShader>( gfx,L"./Assets/Shaders/BlendedPhongPS.cso"));
-        AddStaticIndexBuffer( std::make_unique<IndexBuffer>( gfx,model.indices ) );
 
         const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
             {
@@ -65,10 +41,28 @@ Pyramid::Pyramid(
         } colorConst;
         AddStaticBind( std::make_unique<PixelConstantBuffer<PSMaterialConstant>>( gfx,colorConst,1u ) );
     }
-    else
-    {
-        SetIndexFromStatic();
+
+    struct Vertex {
+        dx::XMFLOAT3 pos;
+        dx::XMFLOAT3 n;
+        std::array<char, 4> color;
+        char padding;
+    };
+
+    const auto tessellation = tdist(rng);
+    auto model = Cone::MakeTesselatedIndependentFaces<Vertex>(tessellation);
+
+    for (auto& v : model.vertices) {
+        v.color = {(char)10, (char)10, (char)255};
     }
+    for (int i = 0; i < tessellation; i++) {
+        model.vertices[i * 3].color = {(char)255, (char)10, (char)10};
+    }
+
+    model.Transform(dx::XMMatrixScaling(1.0f, 1.0f, 0.7f));
+
+    AddBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
+    AddIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
 
     AddBind( std::make_unique<TransformCBuffer>( gfx,*this ) );
 }

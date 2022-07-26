@@ -1,6 +1,7 @@
 ﻿#include "Box.h"
 #include "Graphics/Bindable/BindableBase.h"
 #include "Utility/Marcos/GraphicsThrowMarcos.h"
+#include "Imgui/imgui.h"
 #include "Cube.h"
 
 Box::Box(
@@ -24,7 +25,6 @@ Box::Box(
             dx::XMFLOAT3 n;
         };
         auto model = Cube::MakeIndependent<Vertex>();
-        model.SetNormalsIndependentFlat();
 
         AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
 
@@ -52,15 +52,8 @@ Box::Box(
 
     AddBind(std::make_unique<TransformCBuffer>(gfx, *this));
 
-    struct PSMaterialConstant
-    {
-        dx::XMFLOAT3 color;
-        float specularIntensity = 0.6f;
-        float specularPower = 30.0f;
-        float padding[3];
-    } colorConstant;
-    colorConstant.color = material;
-    AddBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConstant, 1u));
+    materialConstant.color = material;
+    AddBind(std::make_unique<MaterialCbuffer>(gfx, materialConstant, 1u));
 
     // model deformation transform (per instance, not stored as bind)
     dx::XMStoreFloat3x3(
@@ -74,4 +67,29 @@ DirectX::XMMATRIX Box::GetTransformXM() const noexcept
     namespace dx = DirectX;
     return dx::XMLoadFloat3x3(&mt) * TestObject::GetTransformXM();
 
+}
+
+void Box::SpawnControlWindow(int id, D3D11Graphics &gfx) noexcept {
+
+    using namespace std::string_literals;
+
+    bool dirty = false;
+    if (ImGui::Begin(("Box"s + std::to_string(id)).c_str())) {
+        const auto cd = ImGui::ColorEdit3("Material Color", &materialConstant.color.x);
+        const auto sid = ImGui::SliderFloat("Specular Intensity", &materialConstant.specularIntensity, 0.05f, 4.0f, "%.2f");
+        const auto spd = ImGui::SliderFloat("Specular Power", &materialConstant.specularPower, 1.0f, 200.0f, "%.2f");
+        dirty = cd || sid || spd;
+    }
+    ImGui::End();
+
+    if (dirty) {
+        SyncMaterial(gfx);
+    }
+}
+
+void Box::SyncMaterial(D3D11Graphics &gfx) noexcept(!IS_DEBUG) {
+
+    auto pConstPS = QueryBindable<MaterialCbuffer>();
+    assert(pConstPS != nullptr);
+    pConstPS->Update(gfx, materialConstant);
 }

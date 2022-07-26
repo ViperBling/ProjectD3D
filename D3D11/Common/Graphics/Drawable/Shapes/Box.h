@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TestObjects.h"
+#include "Graphics/Bindable/ConstantBuffers.h"
 
 // 使用中间层来创建Box
 class Box : public TestObject<Box>
@@ -16,7 +17,20 @@ public:
     );
     DirectX::XMMATRIX GetTransformXM() const noexcept override;
 
+    void SpawnControlWindow(int id, D3D11Graphics& gfx) noexcept;
+
 private:
+    void SyncMaterial(D3D11Graphics& gfx) noexcept(!IS_DEBUG);
+
+private:
+    struct PSMaterialConstant {
+        DirectX::XMFLOAT3 color;
+        float specularIntensity = 0.6f;
+        float specularPower = 30.0f;
+        float padding[3];
+    } materialConstant;
+    using MaterialCbuffer = PixelConstantBuffer<PSMaterialConstant>;
+
     // model transform
     DirectX::XMFLOAT3X3 mt;
 };
